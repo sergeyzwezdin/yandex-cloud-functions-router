@@ -1,0 +1,24 @@
+{
+  "name": "yandex-cloud-functions-router",
+  "version": "0.0.0",
+  "description": "Routing for Yandex Cloud Functions",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sergeyzwezdin/yandex-cloud-functions-router.git"
+  },
+  "keywords": [
+    "yandex",
+    "cloud",
+    "serverless"
+  ],
+  "author": "Sergey Zwezdin <sergey@zwezdin.com> (https://zwezdin.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sergeyzwezdin/yandex-cloud-functions-router/issues"
+  },
+  "homepage": "https://github.com/sergeyzwezdin/yandex-cloud-functions-router#readme"
+}
