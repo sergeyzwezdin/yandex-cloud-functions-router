@@ -1,0 +1,25 @@
+name: Build
+on:
+  - push
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.2.0
+    - name: Read .nvmrc
+      id: node_version
+      run: echo ::set-output name=NODE_VERSION::$(cat .nvmrc)
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ steps.node_version.outputs.NODE_VERSION }}
+    - name: Install dependencies
+      run: npm ci
+    - name: Format check
+      run: npm run format-check
+    - name: Build
+      run: npm run build
+    - name: Test
+      run: npm run test -- --ci --coverage
