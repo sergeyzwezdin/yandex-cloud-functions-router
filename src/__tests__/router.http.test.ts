@@ -550,6 +550,23 @@ describe('router', () => {
             expect(bodyHandler).toBeCalledTimes(0);
         });
 
+        test('throws an error when no routes defined', async () => {
+            // Arrange
+            const route = router({});
+            const event: CloudFunctionEvent = {
+                ...defaultEvent
+            };
+            const context: CloudFunctionContext = {
+                ...defaultContext
+            };
+
+            // Act
+            const result = route(event, context);
+
+            // Assert
+            await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+        });
+
         test('throws an error when no routes matched', async () => {
             // Arrange
             const route = router({

@@ -13,6 +13,7 @@ import { CloudFuntionResult } from './models/cloudFunctionResult';
 import { Routes } from './models/routes';
 import { httpRouter } from './routers/httpRouter';
 import { messageQueueRouter } from './routers/messageQueueRouter';
+import { objectStorageRouter } from './routers/objectStorageRouter';
 import { timerRouter } from './routers/timerRouter';
 
 const router: (routes: Routes) => (event: CloudFunctionEvent, context: CloudFunctionContext) => Promise<CloudFuntionResult> = (
@@ -29,17 +30,7 @@ const router: (routes: Routes) => (event: CloudFunctionEvent, context: CloudFunc
                 } else if (isMessageQueueEventMessage(message)) {
                     return await messageQueueRouter(routes.message_queue || [], event, message, context);
                 } else if (isObjectStorageEventMessage(message)) {
-                    // handle object storage
-                    /**
-                     * Filter:
-                     * 1. Type:
-                     *    - Create
-                     *    - Update
-                     *    - Delete
-                     * 2. bucket_id
-                     * 3. object_id
-                     */
-                    throw new Error('Not implemented.');
+                    return await objectStorageRouter(routes.object_storage || [], event, message, context);
                 } else if (isIotMessageEventMessage(message)) {
                     // handle iot message
                     /**
@@ -60,7 +51,7 @@ const router: (routes: Routes) => (event: CloudFunctionEvent, context: CloudFunc
 
         if (errors.length === 1) {
             throw errors[0];
-        } else if (errors.length > 0) {
+        } else if (errors.length > 1) {
             throw new Error(errors.map((err) => err.toString()).join('\r'));
         }
     } else {
