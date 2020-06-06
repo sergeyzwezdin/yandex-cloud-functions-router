@@ -4,7 +4,8 @@
   "description": "Routing for Yandex Cloud Functions",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p ./src",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -17,8 +18,19 @@
   ],
   "author": "Sergey Zwezdin <sergey@zwezdin.com> (https://zwezdin.com)",
   "license": "MIT",
+  "files": [
+    "dist/"
+  ],
   "bugs": {
     "url": "https://github.com/sergeyzwezdin/yandex-cloud-functions-router/issues"
   },
-  "homepage": "https://github.com/sergeyzwezdin/yandex-cloud-functions-router#readme"
+  "homepage": "https://github.com/sergeyzwezdin/yandex-cloud-functions-router#readme",
+  "devDependencies": {
+    "@types/jest": "^25.2.3",
+    "@types/node": "^14.0.11",
+    "jest": "^26.0.1",
+    "prettier": "^2.0.5",
+    "ts-jest": "^26.1.0",
+    "typescript": "^3.9.5"
+  }
 }
