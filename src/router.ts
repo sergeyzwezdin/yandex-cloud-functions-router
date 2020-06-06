@@ -22,6 +22,10 @@ const router: (routes: Routes) => (event: CloudFunctionEvent, context: CloudFunc
         for (const message of event.messages) {
             if (isTimerEventMessage(message)) {
                 // handle timer
+                /**
+                 * Filter:
+                 *
+                 */
                 throw new Error('Not implemented.');
             } else if (isMessageQueueEventMessage(message)) {
                 // handle message queue
