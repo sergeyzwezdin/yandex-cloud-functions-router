@@ -12,6 +12,7 @@ import { CloudFunctionContext } from './models/cloudFunctionContext';
 import { CloudFuntionResult } from './models/cloudFunctionResult';
 import { Routes } from './models/routes';
 import { httpRouter } from './routers/httpRouter';
+import { messageQueueRouter } from './routers/messageQueueRouter';
 import { timerRouter } from './routers/timerRouter';
 
 const router: (routes: Routes) => (event: CloudFunctionEvent, context: CloudFunctionContext) => Promise<CloudFuntionResult> = (
@@ -26,13 +27,7 @@ const router: (routes: Routes) => (event: CloudFunctionEvent, context: CloudFunc
                 if (isTimerEventMessage(message)) {
                     return await timerRouter(routes.timer || [], event, message, context);
                 } else if (isMessageQueueEventMessage(message)) {
-                    // handle message queue
-                    /**
-                     * Filter:
-                     * 1. queue_id
-                     * 2. body (regex / json)
-                     */
-                    throw new Error('Not implemented.');
+                    return await messageQueueRouter(routes.message_queue || [], event, message, context);
                 } else if (isObjectStorageEventMessage(message)) {
                     // handle object storage
                     /**

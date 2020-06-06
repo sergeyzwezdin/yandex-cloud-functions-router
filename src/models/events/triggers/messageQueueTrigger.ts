@@ -3,6 +3,8 @@ type CloudFunctionMessageQueueEventMessage = {
         event_id: string;
         event_type: 'yandex.cloud.events.messagequeue.QueueMessage';
         created_at: Date;
+        cloud_id: string;
+        folder_id: string;
     };
     details: {
         queue_id: string;
