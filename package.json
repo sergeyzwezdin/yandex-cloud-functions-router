@@ -1,6 +1,6 @@
 {
   "name": "yandex-cloud-functions-router",
-  "version": "0.0.0",
+  "version": "0.0.1-0",
   "description": "Routing for Yandex Cloud Functions",
   "main": "dist/index.js",
   "scripts": {
