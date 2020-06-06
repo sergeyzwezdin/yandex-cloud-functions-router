@@ -1,4 +1,4 @@
-import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from './../models/cloudFunctionEvent';
+import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from './../cloudFunctionEvent';
 
 import { CloudFunctionContext } from './../cloudFunctionContext';
 import { CloudFuntionResult } from './../cloudFunctionResult';
