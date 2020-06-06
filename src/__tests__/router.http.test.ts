@@ -48,7 +48,7 @@ describe('router', () => {
             const route = router({
                 http: [
                     {
-                        handler: handler
+                        handler
                     }
                 ]
             });

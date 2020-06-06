@@ -72,7 +72,7 @@ describe('matchObjectPattern', () => {
         expect(result).toBeTruthy();
     });
 
-    test("doesn't match object because of different data", () => {
+    test(`doesn't match object because of different data`, () => {
         // Arrange
         const data = {
             type: 'add',
@@ -92,7 +92,7 @@ describe('matchObjectPattern', () => {
         expect(result).toBeFalsy();
     });
 
-    test("doesn't match object because of missing property", () => {
+    test(`doesn't match object because of missing property`, () => {
         // Arrange
         const data = {
             index: 5,
@@ -111,7 +111,7 @@ describe('matchObjectPattern', () => {
         expect(result).toBeFalsy();
     });
 
-    test("doesn't match object because of missing property (deep)", () => {
+    test(`doesn't match object because of missing property (deep)`, () => {
         // Arrange
         const data = {
             type: {
