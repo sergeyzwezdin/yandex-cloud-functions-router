@@ -71,7 +71,7 @@
       "forceConsistentCasingInFileNames": true  /* Disallow inconsistently-cased references to the same file. */
     },
     "exclude": [
-        "*/@types",
-        "*/__tests__"
+        "*/**/@types",
+        "*/**/__tests__"
     ]
   }
