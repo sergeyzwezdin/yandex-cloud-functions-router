@@ -4,6 +4,7 @@ import { CloudFunctionMessageQueueEventMessage, CloudFunctionTriggerEvent } from
 import { eventContext, messageQueueEvent } from './../__data__/router.data';
 
 import { CloudFunctionContext } from './../models/cloudFunctionContext';
+import { consoleSpy } from './../__helpers__/consoleSpy';
 import { matchObjectPattern } from './../helpers/matchObjectPattern';
 import { mocked } from 'ts-jest/utils';
 import { router } from './../router';
@@ -12,6 +13,7 @@ describe('router', () => {
     describe('message queue', () => {
         test('handles any request', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const handler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
                     statusCode: 200
@@ -34,10 +36,16 @@ describe('router', () => {
             expect(result).toBeDefined();
             expect(result?.statusCode).toBe(200);
             expect(handler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by queue ID', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
                     statusCode: 200
@@ -78,10 +86,16 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(queueHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by body (json)', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
                     statusCode: 200
@@ -128,10 +142,16 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(queueHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('skips request by body (json) because of malformed JSON in body', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const handler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
                     statusCode: 200
@@ -159,10 +179,17 @@ describe('router', () => {
 
             // Assert
             await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by body (regexp)', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
                     statusCode: 200
@@ -205,10 +232,16 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(queueHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('skips request because of empty body (regexp)', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const handler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
                     statusCode: 200
@@ -232,14 +265,20 @@ describe('router', () => {
 
             // Assert
             await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+
+            consoleMock.mockRestore();
         });
 
         test('throws an error on unexpected error while validate body', async () => {
+            // Arrange
             mocked(matchObjectPattern).mockImplementationOnce((a: object, b: object) => {
                 throw new Error('Unexpected error.');
             });
-
-            // Arrange
+            const consoleMock = consoleSpy();
             const route = router({
                 message_queue: [
                     {
@@ -260,12 +299,17 @@ describe('router', () => {
 
             // Assert
             await expect(result).rejects.toThrow(new Error('Unexpected error.'));
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
 
+            consoleMock.mockRestore();
             mocked(matchObjectPattern).mockReset();
         });
 
         test('throws an error when no routes defined', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const route = router({});
             const event = messageQueueEvent();
             const context = eventContext();
@@ -275,10 +319,17 @@ describe('router', () => {
 
             // Assert
             await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+
+            consoleMock.mockRestore();
         });
 
         test('throws an error when no routes matched', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const route = router({
                 message_queue: [
                     {
@@ -322,6 +373,12 @@ describe('router', () => {
 
             // Assert
             await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+
+            consoleMock.mockRestore();
         });
     });
 });

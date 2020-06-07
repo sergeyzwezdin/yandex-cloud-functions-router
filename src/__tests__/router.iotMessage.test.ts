@@ -2,12 +2,14 @@ import { CloudFunctionIotMessageEventMessage, CloudFunctionTriggerEvent } from '
 import { eventContext, iotMessageEvent } from './../__data__/router.data';
 
 import { CloudFunctionContext } from './../models/cloudFunctionContext';
+import { consoleSpy } from './../__helpers__/consoleSpy';
 import { router } from './../router';
 
 describe('router', () => {
     describe('IoT Core', () => {
         test('handles any request', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const handler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionIotMessageEventMessage) => ({
                     statusCode: 200
@@ -35,10 +37,18 @@ describe('router', () => {
             expect(result).toBeDefined();
             expect(result?.statusCode).toBe(200);
             expect(handler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} Processing IoT Core message Registry Id: arenou2oj4ct42eq8g3n Device Id: areqjd6un3afc3cefcvm MQTT Topic: $devices/areqjd6un3afc3cefcvm/events`
+                ]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by registry ID', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionIotMessageEventMessage) => ({
                     statusCode: 200
@@ -81,10 +91,18 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(registryHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} Processing IoT Core message Registry Id: arenou2oj4ct42eq8g3n Device Id: areqjd6un3afc3cefcvm MQTT Topic: $devices/areqjd6un3afc3cefcvm/events`
+                ]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by device ID', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionIotMessageEventMessage) => ({
                     statusCode: 200
@@ -127,10 +145,18 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(deviceHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} Processing IoT Core message Registry Id: arenou2oj4ct42eq8g3n Device Id: areqjd6un3afc3cefcvm MQTT Topic: $devices/areqjd6un3afc3cefcvm/events`
+                ]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by mqtt topic', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionIotMessageEventMessage) => ({
                     statusCode: 200
@@ -174,10 +200,18 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(mqttHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} Processing IoT Core message Registry Id: arenou2oj4ct42eq8g3n Device Id: areqjd6un3afc3cefcvm MQTT Topic: $devices/areqjd6un3afc3cefcvm/events`
+                ]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('throws an error when no routes defined', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const route = router({});
             const event = iotMessageEvent({
                 registryId: 'arenou2oj4ct42eq8g3n',
@@ -192,10 +226,19 @@ describe('router', () => {
 
             // Assert
             await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} Processing IoT Core message Registry Id: arenou2oj4ct42eq8g3n Device Id: areqjd6un3afc3cefcvm MQTT Topic: $devices/areqjd6un3afc3cefcvm/events`
+                ]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+
+            consoleMock.mockRestore();
         });
 
         test('throws an error when no routes matched', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const route = router({
                 iot_message: [
                     {
@@ -231,6 +274,14 @@ describe('router', () => {
 
             // Assert
             await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} Processing IoT Core message Registry Id: arenou2oj4ct42eq8g3n Device Id: areqjd6un3afc3cefcvm MQTT Topic: $devices/areqjd6un3afc3cefcvm/events`
+                ]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+
+            consoleMock.mockRestore();
         });
     });
 });

@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p ./src",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "jest --silent",
+    "test:watch": "jest --watch --silent",
     "format-check": "prettier --check \"src/**/*.ts*\"",
     "format": "prettier --write \"src/**/*.ts*\"",
     "lint": "tslint -c ./tslint.json './src/**/*.ts*'"

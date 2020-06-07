@@ -3,6 +3,7 @@ import { HttpRoute, HttpRouteBodyPatternValidate, HttpRouteParamValidate } from 
 import { CloudFunctionContext } from './../models/cloudFunctionContext';
 import { CloudFunctionHttpEvent } from './../models/cloudFunctionEvent';
 import { CloudFuntionResult } from './../models/cloudFunctionResult';
+import { log } from './../helpers/log';
 import { matchObjectPattern } from './../helpers/matchObjectPattern';
 
 const validateHttpMethod = (httpMethod: string[] | undefined, event: CloudFunctionHttpEvent) =>
@@ -92,6 +93,7 @@ const httpRouter: (
         }
     }
 
+    log('WARN', context.requestId, 'There is no matched route', {});
     throw new Error('There is no matched route.');
 };
 

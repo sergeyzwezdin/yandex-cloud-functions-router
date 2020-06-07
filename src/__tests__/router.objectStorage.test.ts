@@ -2,12 +2,14 @@ import { CloudFunctionObjectStorageEventMessage, CloudFunctionTriggerEvent } fro
 import { eventContext, objectStorageEvent } from './../__data__/router.data';
 
 import { CloudFunctionContext } from './../models/cloudFunctionContext';
+import { consoleSpy } from './../__helpers__/consoleSpy';
 import { router } from './../router';
 
 describe('router', () => {
     describe('object storage', () => {
         test('handles any request', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const handler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
                     statusCode: 200
@@ -34,10 +36,16 @@ describe('router', () => {
             expect(result).toBeDefined();
             expect(result?.statusCode).toBe(200);
             expect(handler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing object storage message Bucket Id: s3 Object Id: 1.jpg`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by type (create)', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
                     statusCode: 200
@@ -82,10 +90,16 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(typeHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing object storage message Bucket Id: s3 Object Id: 1.jpg`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by type (update)', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
                     statusCode: 200
@@ -126,10 +140,16 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(typeHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing object storage message Bucket Id: s3 Object Id: 1.jpg`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by type (delete)', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
                     statusCode: 200
@@ -170,10 +190,16 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(typeHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing object storage message Bucket Id: s3 Object Id: 1.jpg`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by bucket ID', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
                     statusCode: 200
@@ -214,10 +240,16 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(bucketHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing object storage message Bucket Id: s3 Object Id: 1.jpg`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by object ID', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
                     statusCode: 200
@@ -258,10 +290,16 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(objectHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing object storage message Bucket Id: s3 Object Id: 1.jpg`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('throws an error when no routes defined', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const route = router({});
             const event = objectStorageEvent({
                 eventType: 'yandex.cloud.events.storage.ObjectCreate',
@@ -275,10 +313,17 @@ describe('router', () => {
 
             // Assert
             await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing object storage message Bucket Id: s3 Object Id: 1.jpg`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+
+            consoleMock.mockRestore();
         });
 
         test('throws an error when no routes matched', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const route = router({
                 object_storage: [
                     {
@@ -313,6 +358,12 @@ describe('router', () => {
 
             // Assert
             await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing object storage message Bucket Id: s3 Object Id: 1.jpg`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+
+            consoleMock.mockRestore();
         });
     });
 });

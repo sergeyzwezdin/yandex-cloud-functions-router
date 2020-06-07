@@ -3,6 +3,7 @@ import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from './../
 import { CloudFunctionContext } from './../models/cloudFunctionContext';
 import { CloudFuntionResult } from './../models/cloudFunctionResult';
 import { TimerRoute } from './../models/routes';
+import { log } from './../helpers/log';
 
 const validateTriggerId = (triggerId: string | undefined, message: CloudFunctionTimerEventMessage) => {
     if (triggerId) {
@@ -31,6 +32,7 @@ const timerRouter: (
         }
     }
 
+    log('WARN', context.requestId, 'There is no matched route', {});
     throw new Error('There is no matched route.');
 };
 
