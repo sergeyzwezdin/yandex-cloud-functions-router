@@ -17,6 +17,7 @@ const validateBodyJson = (pattern: object | undefined, message: CloudFunctionMes
     if (pattern) {
         try {
             const bodyObject = JSON.parse(message.details.message.body);
+            const t = matchObjectPattern(bodyObject, pattern);
             return matchObjectPattern(bodyObject, pattern);
         } catch (e) {
             if (e instanceof SyntaxError) {

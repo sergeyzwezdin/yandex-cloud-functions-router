@@ -1,45 +1,15 @@
-import { CloudFunctionEvent, CloudFunctionHttpEvent } from './../models/cloudFunctionEvent';
+jest.mock('./../helpers/matchObjectPattern');
+
+import { eventContext, httpMethodEvent } from './../__data__/router.data';
 
 import { CloudFunctionContext } from './../models/cloudFunctionContext';
+import { CloudFunctionHttpEvent } from './../models/cloudFunctionEvent';
+import { matchObjectPattern } from './../helpers/matchObjectPattern';
+import { mocked } from 'ts-jest/utils';
 import { router } from './../router';
 
 describe('router', () => {
     describe('http', () => {
-        const defaultEvent: CloudFunctionEvent = {
-            httpMethod: 'GET',
-            headers: {
-                'User-Agent': 'jest'
-            },
-            multiValueHeaders: {},
-            queryStringParameters: {},
-            multiValueQueryStringParameters: {
-                'User-Agent': ['jest']
-            },
-            requestContext: {
-                identity: {
-                    sourceIp: '0.0.0.0',
-                    userAgent: 'jest'
-                },
-                httpMethod: 'GET',
-                requestId: 'cfa8a4b4-cf6a-48e4-959d-83d876463e57',
-                requestTime: '6/Jun/2020:02:56:40 +0000',
-                requestTimeEpoch: 1591412200
-            },
-            body: '{}',
-            isBase64Encoded: false
-        };
-
-        const defaultContext: CloudFunctionContext = {
-            awsRequestId: 'cfa8a4b4-cf6a-48e4-959d-83d876463e57',
-            requestId: 'cfa8a4b4-cf6a-48e4-959d-83d876463e57',
-            invokedFunctionArn: 'd4qps1ccdga5at11o21k',
-            functionName: 'd4qps1ccdga5at11o21k',
-            functionVersion: 'd4qps1ccdga5at11o21k',
-            memoryLimitInMB: '128',
-            deadlineMs: 1591412211848,
-            logGroupName: 'mtxgg5vw5al4twskw1st'
-        };
-
         test('handles any request', async () => {
             // Arrange
             const handler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
@@ -52,13 +22,8 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
-                httpMethod: 'GET'
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -89,13 +54,8 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
-                httpMethod: 'GET'
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -127,13 +87,8 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
-                httpMethod: 'POST'
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            const event = httpMethodEvent({ httpMethod: 'POST' });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -179,16 +134,14 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 queryStringParameters: {
                     Kind: 'test'
                 }
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -243,16 +196,13 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 queryStringParameters: {
                     kind: 'value+test'
                 }
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -307,16 +257,13 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 queryStringParameters: {
                     kind: 'Value+Test'
                 }
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -343,12 +290,8 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
 
             // Act
             const result = route(event, context);
@@ -385,8 +328,7 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -397,10 +339,8 @@ describe('router', () => {
                         x: 1
                     }
                 })
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -435,8 +375,7 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 body: JSON.stringify({
                     type: 'update',
@@ -444,10 +383,8 @@ describe('router', () => {
                         x: 1
                     }
                 })
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -478,8 +415,7 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -490,10 +426,8 @@ describe('router', () => {
                         x: 1
                     }
                 })
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -528,17 +462,14 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: `{"type": "update", "data":{"x":1`
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -550,15 +481,47 @@ describe('router', () => {
             expect(bodyHandler).toBeCalledTimes(0);
         });
 
+        test('throws an error on unexpected error while validate body', async () => {
+            mocked(matchObjectPattern).mockImplementationOnce((a: object, b: object) => {
+                throw new Error('Unexpected error.');
+            });
+
+            // Arrange
+            const route = router({
+                http: [
+                    {
+                        body: {
+                            json: {}
+                        },
+                        handler: () => ({
+                            statusCode: 200
+                        })
+                    }
+                ]
+            });
+            const event = httpMethodEvent({
+                httpMethod: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            });
+            const context = eventContext();
+
+            // Act
+            const result = route(event, context);
+
+            // Assert
+            await expect(result).rejects.toThrow(new Error('Unexpected error.'));
+
+            mocked(matchObjectPattern).mockReset();
+        });
+
         test('throws an error when no routes defined', async () => {
             // Arrange
             const route = router({});
-            const event: CloudFunctionEvent = {
-                ...defaultEvent
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
 
             // Act
             const result = route(event, context);
@@ -582,12 +545,8 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
 
             // Act
             const result = route(event, context);

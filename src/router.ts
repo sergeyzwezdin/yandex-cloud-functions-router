@@ -12,6 +12,7 @@ import { CloudFunctionContext } from './models/cloudFunctionContext';
 import { CloudFuntionResult } from './models/cloudFunctionResult';
 import { Routes } from './models/routes';
 import { httpRouter } from './routers/httpRouter';
+import { iotMessageRouter } from './routers/iotMessageRouter';
 import { messageQueueRouter } from './routers/messageQueueRouter';
 import { objectStorageRouter } from './routers/objectStorageRouter';
 import { timerRouter } from './routers/timerRouter';
@@ -32,15 +33,7 @@ const router: (routes: Routes) => (event: CloudFunctionEvent, context: CloudFunc
                 } else if (isObjectStorageEventMessage(message)) {
                     return await objectStorageRouter(routes.object_storage || [], event, message, context);
                 } else if (isIotMessageEventMessage(message)) {
-                    // handle iot message
-                    /**
-                     * Filter:
-                     * 1. registry_id
-                     * 2. device_id
-                     * 3. mqtt_topic
-                     * 4. payload (regex)
-                     */
-                    throw new Error('Not implemented.');
+                    return await iotMessageRouter(routes.iot_message || [], event, message, context);
                 } else {
                     throw new Error('Unknown message type.');
                 }
@@ -52,7 +45,7 @@ const router: (routes: Routes) => (event: CloudFunctionEvent, context: CloudFunc
         if (errors.length === 1) {
             throw errors[0];
         } else if (errors.length > 1) {
-            throw new Error(errors.map((err) => err.toString()).join('\r'));
+            throw new Error(errors.map((err) => err.toString()).join('\n'));
         }
     } else {
         throw new Error('Unknown event type.');
