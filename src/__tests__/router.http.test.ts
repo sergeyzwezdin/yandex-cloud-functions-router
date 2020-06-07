@@ -1,47 +1,19 @@
-import { CloudFunctionEvent, CloudFunctionHttpEvent } from './../models/cloudFunctionEvent';
+jest.mock('./../helpers/matchObjectPattern');
+
+import { eventContext, httpMethodEvent } from './../__data__/router.data';
 
 import { CloudFunctionContext } from './../models/cloudFunctionContext';
+import { CloudFunctionHttpEvent } from './../models/cloudFunctionEvent';
+import { consoleSpy } from './../__helpers__/consoleSpy';
+import { matchObjectPattern } from './../helpers/matchObjectPattern';
+import { mocked } from 'ts-jest/utils';
 import { router } from './../router';
 
 describe('router', () => {
     describe('http', () => {
-        const defaultEvent: CloudFunctionEvent = {
-            httpMethod: 'GET',
-            headers: {
-                'User-Agent': 'jest'
-            },
-            multiValueHeaders: {},
-            queryStringParameters: {},
-            multiValueQueryStringParameters: {
-                'User-Agent': ['jest']
-            },
-            requestContext: {
-                identity: {
-                    sourceIp: '0.0.0.0',
-                    userAgent: 'jest'
-                },
-                httpMethod: 'GET',
-                requestId: 'cfa8a4b4-cf6a-48e4-959d-83d876463e57',
-                requestTime: '6/Jun/2020:02:56:40 +0000',
-                requestTimeEpoch: 1591412200
-            },
-            body: '{}',
-            isBase64Encoded: false
-        };
-
-        const defaultContext: CloudFunctionContext = {
-            awsRequestId: 'cfa8a4b4-cf6a-48e4-959d-83d876463e57',
-            requestId: 'cfa8a4b4-cf6a-48e4-959d-83d876463e57',
-            invokedFunctionArn: 'd4qps1ccdga5at11o21k',
-            functionName: 'd4qps1ccdga5at11o21k',
-            functionVersion: 'd4qps1ccdga5at11o21k',
-            memoryLimitInMB: '128',
-            deadlineMs: 1591412211848,
-            logGroupName: 'mtxgg5vw5al4twskw1st'
-        };
-
         test('handles any request', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const handler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -52,13 +24,8 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
-                httpMethod: 'GET'
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -67,10 +34,16 @@ describe('router', () => {
             expect(result).toBeDefined();
             expect(result?.statusCode).toBe(200);
             expect(handler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles GET request', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const getHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -89,13 +62,8 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
-                httpMethod: 'GET'
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -105,10 +73,16 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(getHandler).toBeCalledTimes(1);
             expect(postHandler).toBeCalledTimes(0);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles POST request', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const getHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -127,13 +101,8 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
-                httpMethod: 'POST'
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            const event = httpMethodEvent({ httpMethod: 'POST' });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -143,10 +112,16 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(getHandler).toBeCalledTimes(0);
             expect(postHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by exact param', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -179,16 +154,14 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 queryStringParameters: {
                     Kind: 'test'
                 }
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -198,10 +171,18 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(paramsHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 0 Query: {"Kind":"test"} Headers: {"User-Agent":"jest"}`
+                ]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by substring param', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -243,16 +224,13 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 queryStringParameters: {
                     kind: 'value+test'
                 }
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -262,10 +240,18 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(paramsHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 0 Query: {"kind":"value+test"} Headers: {"User-Agent":"jest"}`
+                ]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by regex param', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -307,16 +293,13 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 queryStringParameters: {
                     kind: 'Value+Test'
                 }
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -326,10 +309,18 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(paramsHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 0 Query: {"kind":"Value+Test"} Headers: {"User-Agent":"jest"}`
+                ]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('throws an error on invalid param type', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const route = router({
                 http: [
                     {
@@ -343,22 +334,24 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
 
             // Act
             const result = route(event, context);
 
             // Assert
             await expect(result).rejects.toThrow(new Error('Not supported type: unknown'));
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('handles request by body pattern', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -385,8 +378,7 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -397,10 +389,8 @@ describe('router', () => {
                         x: 1
                     }
                 })
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -410,10 +400,18 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(bodyHandler).toBeCalledTimes(1);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 32 Query: {} Headers: {"User-Agent":"jest","Content-Type":"application/json"}`
+                ]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('skips request by body pattern without content-type header', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -435,8 +433,7 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 body: JSON.stringify({
                     type: 'update',
@@ -444,10 +441,8 @@ describe('router', () => {
                         x: 1
                     }
                 })
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -457,10 +452,16 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(1);
             expect(bodyHandler).toBeCalledTimes(0);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 32 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('skips request by empty body pattern', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -478,8 +479,7 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -490,10 +490,8 @@ describe('router', () => {
                         x: 1
                     }
                 })
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -503,10 +501,18 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(1);
             expect(bodyHandler).toBeCalledTimes(0);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 32 Query: {} Headers: {"User-Agent":"jest","Content-Type":"application/json"}`
+                ]
+            ]);
+
+            consoleMock.mockRestore();
         });
 
         test('skips request with body pattern with malformed JSON in body', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -528,17 +534,14 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent,
+            const event = httpMethodEvent({
                 httpMethod: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: `{"type": "update", "data":{"x":1`
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            });
+            const context = eventContext();
 
             // Act
             const result = await route(event, context);
@@ -548,27 +551,80 @@ describe('router', () => {
             expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(1);
             expect(bodyHandler).toBeCalledTimes(0);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 32 Query: {} Headers: {"User-Agent":"jest","Content-Type":"application/json"}`
+                ]
+            ]);
+
+            consoleMock.mockRestore();
+        });
+
+        test('throws an error on unexpected error while validate body', async () => {
+            // Arrange
+            mocked(matchObjectPattern).mockImplementationOnce((a: object, b: object) => {
+                throw new Error('Unexpected error.');
+            });
+            const consoleMock = consoleSpy();
+            const route = router({
+                http: [
+                    {
+                        body: {
+                            json: {}
+                        },
+                        handler: () => ({
+                            statusCode: 200
+                        })
+                    }
+                ]
+            });
+            const event = httpMethodEvent({
+                httpMethod: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            });
+            const context = eventContext();
+
+            // Act
+            const result = route(event, context);
+
+            // Assert
+            await expect(result).rejects.toThrow(new Error('Unexpected error.'));
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 2 Query: {} Headers: {"User-Agent":"jest","Content-Type":"application/json"}`
+                ]
+            ]);
+
+            consoleMock.mockRestore();
+            mocked(matchObjectPattern).mockReset();
         });
 
         test('throws an error when no routes defined', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const route = router({});
-            const event: CloudFunctionEvent = {
-                ...defaultEvent
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
 
             // Act
             const result = route(event, context);
 
             // Assert
             await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+
+            consoleMock.mockRestore();
         });
 
         test('throws an error when no routes matched', async () => {
             // Arrange
+            const consoleMock = consoleSpy();
             const route = router({
                 http: [
                     {
@@ -582,18 +638,20 @@ describe('router', () => {
                     }
                 ]
             });
-            const event: CloudFunctionEvent = {
-                ...defaultEvent
-            };
-            const context: CloudFunctionContext = {
-                ...defaultContext
-            };
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
 
             // Act
             const result = route(event, context);
 
             // Assert
             await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+
+            consoleMock.mockRestore();
         });
     });
 });

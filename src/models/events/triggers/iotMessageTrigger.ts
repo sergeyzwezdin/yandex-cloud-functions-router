@@ -3,6 +3,8 @@ type CloudFunctionIotMessageEventMessage = {
         event_id: string;
         event_type: 'yandex.cloud.events.iot.IoTMessage';
         created_at: Date;
+        cloud_id: string;
+        folder_id: string;
     };
     details: {
         registry_id: string;

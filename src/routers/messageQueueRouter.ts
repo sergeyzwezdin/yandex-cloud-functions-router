@@ -3,6 +3,7 @@ import { CloudFunctionMessageQueueEventMessage, CloudFunctionTriggerEvent } from
 import { CloudFunctionContext } from './../models/cloudFunctionContext';
 import { CloudFuntionResult } from './../models/cloudFunctionResult';
 import { MessageQueueRoute } from './../models/routes';
+import { log } from './../helpers/log';
 import { matchObjectPattern } from './../helpers/matchObjectPattern';
 
 const validateQueueId = (queueId: string | undefined, message: CloudFunctionMessageQueueEventMessage) => {
@@ -17,6 +18,7 @@ const validateBodyJson = (pattern: object | undefined, message: CloudFunctionMes
     if (pattern) {
         try {
             const bodyObject = JSON.parse(message.details.message.body);
+            const t = matchObjectPattern(bodyObject, pattern);
             return matchObjectPattern(bodyObject, pattern);
         } catch (e) {
             if (e instanceof SyntaxError) {
@@ -62,6 +64,7 @@ const messageQueueRouter: (
         }
     }
 
+    log('WARN', context.requestId, 'There is no matched route', {});
     throw new Error('There is no matched route.');
 };
 
