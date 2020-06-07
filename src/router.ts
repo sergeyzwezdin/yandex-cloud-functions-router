@@ -24,16 +24,17 @@ const router: (routes: Routes) => (event: CloudFunctionEvent, context: CloudFunc
         return await httpRouter(routes.http || [], event, context);
     } else if (isTriggerEvent(event)) {
         const errors: Error[] = [];
+
         for (const message of event.messages) {
             try {
                 if (isTimerEventMessage(message)) {
-                    return await timerRouter(routes.timer || [], event, message, context);
+                    await timerRouter(routes.timer || [], event, message, context);
                 } else if (isMessageQueueEventMessage(message)) {
-                    return await messageQueueRouter(routes.message_queue || [], event, message, context);
+                    await messageQueueRouter(routes.message_queue || [], event, message, context);
                 } else if (isObjectStorageEventMessage(message)) {
-                    return await objectStorageRouter(routes.object_storage || [], event, message, context);
+                    await objectStorageRouter(routes.object_storage || [], event, message, context);
                 } else if (isIotMessageEventMessage(message)) {
-                    return await iotMessageRouter(routes.iot_message || [], event, message, context);
+                    await iotMessageRouter(routes.iot_message || [], event, message, context);
                 } else {
                     throw new Error('Unknown message type.');
                 }
@@ -46,6 +47,10 @@ const router: (routes: Routes) => (event: CloudFunctionEvent, context: CloudFunc
             throw errors[0];
         } else if (errors.length > 1) {
             throw new Error(errors.map((err) => err.toString()).join('\n'));
+        } else {
+            return {
+                statusCode: 200
+            };
         }
     } else {
         throw new Error('Unknown event type.');
