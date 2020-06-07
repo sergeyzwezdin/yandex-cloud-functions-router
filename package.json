@@ -1,7 +1,7 @@
 {
   "name": "yandex-cloud-functions-router",
   "version": "0.0.1-0",
-  "description": "Routing for Yandex Cloud Functions",
+  "description": "Node router for Yandex Cloud Functions",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p ./src",
