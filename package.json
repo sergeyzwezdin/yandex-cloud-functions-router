@@ -17,7 +17,11 @@
   },
   "keywords": [
     "yandex",
+    "yandex-cloud",
+    "yandex-function",
+    "yandex-cloud-functions",
     "cloud",
+    "sdk",
     "serverless"
   ],
   "author": "Sergey Zwezdin <sergey@zwezdin.com> (https://zwezdin.com)",
