@@ -1,10 +1,14 @@
-import { HttpRoute, HttpRouteBodyPatternValidate, HttpRouteParamValidate } from './../models/routes';
+import { HttpRoute, HttpRouteBodyPatternValidate, HttpRouteParamValidate } from '../models/routes';
 
-import { CloudFunctionContext } from './../models/cloudFunctionContext';
-import { CloudFunctionHttpEvent } from './../models/cloudFunctionEvent';
-import { CloudFuntionResult } from './../models/cloudFunctionResult';
-import { log } from './../helpers/log';
-import { matchObjectPattern } from './../helpers/matchObjectPattern';
+import { CloudFunctionContext } from '../models/cloudFunctionContext';
+import { CloudFunctionHttpEvent } from '../models/cloudFunctionEvent';
+import { CloudFuntionResult } from '../models/cloudFunctionResult';
+import { RouterOptions } from '../models/routerOptions';
+import { appendCorsHeadersToMainResponse } from './http/cors/appendCorsHeadersToMainResponse';
+import { handleCorsPreflight } from './http/cors/handleCorsPreflight';
+import { log } from '../helpers/log';
+import { matchObjectPattern } from '../helpers/matchObjectPattern';
+import { resolveCorsOptions } from './http/cors/resolveCorsOptions';
 
 const validateHttpMethod = (httpMethod: string[] | undefined, event: CloudFunctionHttpEvent) =>
     httpMethod ? httpMethod.map((m) => m.trim().toLowerCase()).indexOf(event.httpMethod.trim().toLocaleLowerCase()) !== -1 : true;
@@ -78,19 +82,26 @@ const validateBodyPattern = (pattern: HttpRouteBodyPatternValidate | undefined, 
 const httpRouter: (
     routes: HttpRoute[],
     event: CloudFunctionHttpEvent,
-    context: CloudFunctionContext
-) => Promise<CloudFuntionResult> = async (routes, event, context) => {
+    context: CloudFunctionContext,
+    options?: RouterOptions
+) => Promise<CloudFuntionResult> = async (routes, event, context, options) => {
+    const corsOptions = resolveCorsOptions(options?.cors);
+
     for (const { httpMethod, params, body, handler } of routes) {
         const matched = validateHttpMethod(httpMethod, event) && validateParams(params, event) && validateBodyPattern(body, event);
 
         if (matched) {
-            const result = handler(event, context);
-            if (result instanceof Promise) {
-                return result;
-            } else {
-                return Promise.resolve(result);
-            }
+            const handlerResult = handler(event, context);
+            const result = handlerResult instanceof Promise ? await handlerResult : handlerResult;
+
+            return appendCorsHeadersToMainResponse(event, result, corsOptions);
         }
+    }
+
+    const preflightResponse = handleCorsPreflight(event, corsOptions);
+    if (preflightResponse) {
+        log('INFO', context.requestId, 'CORS preflight request handled ', {});
+        return preflightResponse;
     }
 
     log('WARN', context.requestId, 'There is no matched route', {});

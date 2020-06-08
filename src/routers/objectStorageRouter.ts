@@ -1,9 +1,9 @@
-import { CloudFunctionObjectStorageEventMessage, CloudFunctionTriggerEvent } from './../models/cloudFunctionEvent';
-import { ObjectStorageRoute, ObjectStorageRouteTypeValidate } from './../models/routes';
+import { CloudFunctionObjectStorageEventMessage, CloudFunctionTriggerEvent } from '../models/cloudFunctionEvent';
+import { ObjectStorageRoute, ObjectStorageRouteTypeValidate } from '../models/routes';
 
-import { CloudFunctionContext } from './../models/cloudFunctionContext';
-import { CloudFuntionResult } from './../models/cloudFunctionResult';
-import { log } from './../helpers/log';
+import { CloudFunctionContext } from '../models/cloudFunctionContext';
+import { CloudFuntionResult } from '../models/cloudFunctionResult';
+import { log } from '../helpers/log';
 
 const validateType = (type: ObjectStorageRouteTypeValidate | undefined, message: CloudFunctionObjectStorageEventMessage) => {
     if (type) {

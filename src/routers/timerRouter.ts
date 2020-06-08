@@ -1,9 +1,9 @@
-import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from './../models/cloudFunctionEvent';
+import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from '../models/cloudFunctionEvent';
 
-import { CloudFunctionContext } from './../models/cloudFunctionContext';
-import { CloudFuntionResult } from './../models/cloudFunctionResult';
-import { TimerRoute } from './../models/routes';
-import { log } from './../helpers/log';
+import { CloudFunctionContext } from '../models/cloudFunctionContext';
+import { CloudFuntionResult } from '../models/cloudFunctionResult';
+import { TimerRoute } from '../models/routes';
+import { log } from '../helpers/log';
 
 const validateTriggerId = (triggerId: string | undefined, message: CloudFunctionTimerEventMessage) => {
     if (triggerId) {
