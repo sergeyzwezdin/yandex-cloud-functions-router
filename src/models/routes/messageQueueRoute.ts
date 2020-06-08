@@ -1,7 +1,7 @@
-import { CloudFunctionMessageQueueEventMessage, CloudFunctionTriggerEvent } from './../cloudFunctionEvent';
+import { CloudFunctionMessageQueueEventMessage, CloudFunctionTriggerEvent } from '../cloudFunctionEvent';
 
-import { CloudFunctionContext } from './../cloudFunctionContext';
-import { CloudFuntionResult } from './../cloudFunctionResult';
+import { CloudFunctionContext } from '../cloudFunctionContext';
+import { CloudFuntionResult } from '../cloudFunctionResult';
 
 type MessageQueueRoute = {
     queueId?: string;

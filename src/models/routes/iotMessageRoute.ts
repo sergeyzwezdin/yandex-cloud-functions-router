@@ -1,7 +1,7 @@
-import { CloudFunctionIotMessageEventMessage, CloudFunctionTriggerEvent } from './../cloudFunctionEvent';
+import { CloudFunctionIotMessageEventMessage, CloudFunctionTriggerEvent } from '../cloudFunctionEvent';
 
-import { CloudFunctionContext } from './../cloudFunctionContext';
-import { CloudFuntionResult } from './../cloudFunctionResult';
+import { CloudFunctionContext } from '../cloudFunctionContext';
+import { CloudFuntionResult } from '../cloudFunctionResult';
 
 type IoTMessageRoute = {
     registryId?: string;

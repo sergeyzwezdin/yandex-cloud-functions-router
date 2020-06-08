@@ -1,9 +1,9 @@
-import { CloudFunctionIotMessageEventMessage, CloudFunctionTriggerEvent } from './../models/cloudFunctionEvent';
+import { CloudFunctionIotMessageEventMessage, CloudFunctionTriggerEvent } from '../models/cloudFunctionEvent';
 
-import { CloudFunctionContext } from './../models/cloudFunctionContext';
-import { CloudFuntionResult } from './../models/cloudFunctionResult';
-import { IoTMessageRoute } from './../models/routes';
-import { log } from './../helpers/log';
+import { CloudFunctionContext } from '../models/cloudFunctionContext';
+import { CloudFuntionResult } from '../models/cloudFunctionResult';
+import { IoTMessageRoute } from '../models/routes';
+import { log } from '../helpers/log';
 
 const validateRegistryId = (registryId: string | undefined, message: CloudFunctionIotMessageEventMessage) => {
     if (registryId) {

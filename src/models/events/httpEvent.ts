@@ -1,4 +1,4 @@
-import { HttpMethod } from './../httpMethod';
+import { HttpMethod } from '../httpMethod';
 
 type CloudFunctionHttpEvent = {
     httpMethod: HttpMethod;

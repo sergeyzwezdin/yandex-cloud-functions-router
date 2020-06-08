@@ -1,19 +1,35 @@
-jest.mock('./../helpers/matchObjectPattern');
+jest.mock('../helpers/matchObjectPattern');
 
-import { eventContext, httpMethodEvent } from './../__data__/router.data';
+import { eventContext, httpMethodEvent } from '../__data__/router.data';
 
-import { CloudFunctionContext } from './../models/cloudFunctionContext';
-import { CloudFunctionHttpEvent } from './../models/cloudFunctionEvent';
-import { consoleSpy } from './../__helpers__/consoleSpy';
-import { matchObjectPattern } from './../helpers/matchObjectPattern';
+import { CloudFunctionContext } from '../models/cloudFunctionContext';
+import { CloudFunctionHttpEvent } from '../models/cloudFunctionEvent';
+import { HttpRouteParamValidateType } from '../models/routes';
+import { consoleSpy } from '../__helpers__/consoleSpy';
+import { matchObjectPattern } from '../helpers/matchObjectPattern';
 import { mocked } from 'ts-jest/utils';
-import { router } from './../router';
+import { router } from '../router';
 
 describe('router', () => {
     describe('http', () => {
-        test('handles any request', async () => {
+        let consoleMock: {
+            log: jest.SpyInstance;
+            info: jest.SpyInstance;
+            warn: jest.SpyInstance;
+            error: jest.SpyInstance;
+            mockRestore: () => void;
+        };
+
+        beforeEach(() => {
+            consoleMock = consoleSpy();
+        });
+
+        afterEach(() => {
+            consoleMock.mockRestore();
+        });
+
+        it('handles any request', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const handler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -32,18 +48,17 @@ describe('router', () => {
 
             // Assert
             expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
             expect(handler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
             ]);
-
-            consoleMock.mockRestore();
         });
 
-        test('handles GET request', async () => {
+        it('handles GET request', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const getHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -53,10 +68,12 @@ describe('router', () => {
             const route = router({
                 http: [
                     {
+                        // @ts-ignore
                         httpMethod: ['Post'], // intentionally case-insensitive method name check
                         handler: postHandler
                     },
                     {
+                        // @ts-ignore
                         httpMethod: ['Get'], // intentionally case-insensitive method name check
                         handler: getHandler
                     }
@@ -70,19 +87,18 @@ describe('router', () => {
 
             // Assert
             expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
             expect(getHandler).toBeCalledTimes(1);
             expect(postHandler).toBeCalledTimes(0);
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
             ]);
-
-            consoleMock.mockRestore();
         });
 
-        test('handles POST request', async () => {
+        it('handles POST request', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const getHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -92,10 +108,12 @@ describe('router', () => {
             const route = router({
                 http: [
                     {
+                        // @ts-ignore
                         httpMethod: ['Post'], // intentionally case-insensitive method name check
                         handler: postHandler
                     },
                     {
+                        // @ts-ignore
                         httpMethod: ['Get'], // intentionally case-insensitive method name check
                         handler: getHandler
                     }
@@ -109,19 +127,18 @@ describe('router', () => {
 
             // Assert
             expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
             expect(getHandler).toBeCalledTimes(0);
             expect(postHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
             ]);
-
-            consoleMock.mockRestore();
         });
 
-        test('handles request by exact param', async () => {
+        it('handles request by exact param', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -133,17 +150,18 @@ describe('router', () => {
                     {
                         params: {
                             kind: {
-                                type: 'exact',
+                                type: 'exact' as HttpRouteParamValidateType,
                                 value: 'test2'
                             }
                         },
                         handler: defaultHandler
                     },
                     {
+                        // @ts-ignore
                         httpMethod: ['Post'], // intentionally case-insensitive method name check
                         params: {
                             kind: {
-                                type: 'exact',
+                                type: 'exact' as HttpRouteParamValidateType,
                                 value: 'test'
                             }
                         },
@@ -168,7 +186,9 @@ describe('router', () => {
 
             // Assert
             expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
             expect(defaultHandler).toBeCalledTimes(0);
             expect(paramsHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -176,13 +196,10 @@ describe('router', () => {
                     `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 0 Query: {"Kind":"test"} Headers: {"User-Agent":"jest"}`
                 ]
             ]);
-
-            consoleMock.mockRestore();
         });
 
-        test('handles request by substring param', async () => {
+        it('handles request by substring param', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -194,7 +211,7 @@ describe('router', () => {
                     {
                         params: {
                             kind: {
-                                type: 'substring',
+                                type: 'substring' as HttpRouteParamValidateType,
                                 value: 'test2'
                             }
                         },
@@ -203,17 +220,18 @@ describe('router', () => {
                     {
                         params: {
                             kind: {
-                                type: 'substring',
+                                type: 'substring' as HttpRouteParamValidateType,
                                 value: '' // empty values are ignored
                             }
                         },
                         handler: defaultHandler
                     },
                     {
+                        // @ts-ignore
                         httpMethod: ['Post'], // intentionally case-insensitive method name check
                         params: {
                             kind: {
-                                type: 'substring',
+                                type: 'substring' as HttpRouteParamValidateType,
                                 value: 'test'
                             }
                         },
@@ -237,7 +255,9 @@ describe('router', () => {
 
             // Assert
             expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
             expect(defaultHandler).toBeCalledTimes(0);
             expect(paramsHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -245,13 +265,10 @@ describe('router', () => {
                     `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 0 Query: {"kind":"value+test"} Headers: {"User-Agent":"jest"}`
                 ]
             ]);
-
-            consoleMock.mockRestore();
         });
 
-        test('handles request by regex param', async () => {
+        it('handles request by regex param', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -263,7 +280,7 @@ describe('router', () => {
                     {
                         params: {
                             kind: {
-                                type: 'regexp',
+                                type: 'regexp' as HttpRouteParamValidateType,
                                 pattern: /test2/i
                             }
                         },
@@ -272,17 +289,18 @@ describe('router', () => {
                     {
                         params: {
                             kind: {
-                                type: 'regexp',
+                                type: 'regexp' as HttpRouteParamValidateType,
                                 pattern: undefined // undefined patterns are ignored
                             }
                         },
                         handler: defaultHandler
                     },
                     {
+                        // @ts-ignore
                         httpMethod: ['Post'], // intentionally case-insensitive method name check
                         params: {
                             kind: {
-                                type: 'regexp',
+                                type: 'regexp' as HttpRouteParamValidateType,
                                 pattern: /test/i
                             }
                         },
@@ -306,7 +324,9 @@ describe('router', () => {
 
             // Assert
             expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
             expect(defaultHandler).toBeCalledTimes(0);
             expect(paramsHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -314,13 +334,10 @@ describe('router', () => {
                     `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 0 Query: {"kind":"Value+Test"} Headers: {"User-Agent":"jest"}`
                 ]
             ]);
-
-            consoleMock.mockRestore();
         });
 
-        test('throws an error on invalid param type', async () => {
+        it('throws an error on invalid param type', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const route = router({
                 http: [
                     {
@@ -345,13 +362,10 @@ describe('router', () => {
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
             ]);
-
-            consoleMock.mockRestore();
         });
 
-        test('handles request by body pattern', async () => {
+        it('handles request by body pattern', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -361,10 +375,12 @@ describe('router', () => {
             const route = router({
                 http: [
                     {
+                        // @ts-ignore
                         httpMethod: ['Get'], // intentionally case-insensitive method name check
                         handler: defaultHandler
                     },
                     {
+                        // @ts-ignore
                         httpMethod: ['Post'], // intentionally case-insensitive method name check
                         body: {
                             json: {
@@ -397,7 +413,9 @@ describe('router', () => {
 
             // Assert
             expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
             expect(defaultHandler).toBeCalledTimes(0);
             expect(bodyHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -405,13 +423,10 @@ describe('router', () => {
                     `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 32 Query: {} Headers: {"User-Agent":"jest","Content-Type":"application/json"}`
                 ]
             ]);
-
-            consoleMock.mockRestore();
         });
 
-        test('skips request by body pattern without content-type header', async () => {
+        it('skips request by body pattern without content-type header', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -449,19 +464,18 @@ describe('router', () => {
 
             // Assert
             expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
             expect(defaultHandler).toBeCalledTimes(1);
             expect(bodyHandler).toBeCalledTimes(0);
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 32 Query: {} Headers: {"User-Agent":"jest"}`]
             ]);
-
-            consoleMock.mockRestore();
         });
 
-        test('skips request by empty body pattern', async () => {
+        it('skips request by empty body pattern', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -498,7 +512,9 @@ describe('router', () => {
 
             // Assert
             expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
             expect(defaultHandler).toBeCalledTimes(1);
             expect(bodyHandler).toBeCalledTimes(0);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -506,13 +522,10 @@ describe('router', () => {
                     `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 32 Query: {} Headers: {"User-Agent":"jest","Content-Type":"application/json"}`
                 ]
             ]);
-
-            consoleMock.mockRestore();
         });
 
-        test('skips request with body pattern with malformed JSON in body', async () => {
+        it('skips request with body pattern with malformed JSON in body', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
@@ -548,7 +561,9 @@ describe('router', () => {
 
             // Assert
             expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
             expect(defaultHandler).toBeCalledTimes(1);
             expect(bodyHandler).toBeCalledTimes(0);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -556,16 +571,15 @@ describe('router', () => {
                     `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 32 Query: {} Headers: {"User-Agent":"jest","Content-Type":"application/json"}`
                 ]
             ]);
-
-            consoleMock.mockRestore();
         });
 
-        test('throws an error on unexpected error while validate body', async () => {
-            // Arrange
+        it('throws an error on unexpected error while validate body', async () => {
+            // Setup
             mocked(matchObjectPattern).mockImplementationOnce((a: object, b: object) => {
                 throw new Error('Unexpected error.');
             });
-            const consoleMock = consoleSpy();
+
+            // Arrange
             const route = router({
                 http: [
                     {
@@ -598,13 +612,12 @@ describe('router', () => {
                 ]
             ]);
 
-            consoleMock.mockRestore();
+            // Teardown
             mocked(matchObjectPattern).mockReset();
         });
 
-        test('throws an error when no routes defined', async () => {
+        it('throws an error when no routes defined', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const route = router({});
             const event = httpMethodEvent({ httpMethod: 'GET' });
             const context = eventContext();
@@ -618,13 +631,10 @@ describe('router', () => {
                 [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
             ]);
             expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
-
-            consoleMock.mockRestore();
         });
 
-        test('throws an error when no routes matched', async () => {
+        it('throws an error when no routes matched', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const route = router({
                 http: [
                     {
@@ -650,8 +660,6 @@ describe('router', () => {
                 [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
             ]);
             expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
-
-            consoleMock.mockRestore();
         });
     });
 });

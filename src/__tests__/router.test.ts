@@ -1,10 +1,10 @@
-import { CloudFunctionEvent, CloudFunctionObjectStorageEventMessage, CloudFunctionTriggerEvent } from './../models/cloudFunctionEvent';
+import { CloudFunctionEvent, CloudFunctionObjectStorageEventMessage, CloudFunctionTriggerEvent } from '../models/cloudFunctionEvent';
 
-import { CloudFunctionContext } from './../models/cloudFunctionContext';
-import { router } from './../router';
+import { CloudFunctionContext } from '../models/cloudFunctionContext';
+import { router } from '../router';
 
 describe('router', () => {
-    test('throws an error for unknown event type', async () => {
+    it('throws an error for unknown event type', async () => {
         // Arrange
         const route = router({});
         const event: CloudFunctionEvent = {} as CloudFunctionEvent;
@@ -17,7 +17,7 @@ describe('router', () => {
         await expect(result).rejects.toThrow(new Error('Unknown event type.'));
     });
 
-    test('throws an error for unknown message type', async () => {
+    it('throws an error for unknown message type', async () => {
         // Arrange
         const route = router({});
         // @ts-ignore
@@ -39,7 +39,7 @@ describe('router', () => {
         await expect(result).rejects.toThrow(new Error('Unknown message type.'));
     });
 
-    test('throws an error that combines multiplie errors from message handlers', async () => {
+    it('throws an error that combines multiplie errors from message handlers', async () => {
         // Arrange
         const route = router({
             message_queue: [

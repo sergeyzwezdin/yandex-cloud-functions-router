@@ -1,4 +1,4 @@
-const actual = jest.requireActual('./../matchObjectPattern');
+const actual = jest.requireActual('../matchObjectPattern');
 
 actual.matchObjectPattern = jest.fn(actual.matchObjectPattern);
 

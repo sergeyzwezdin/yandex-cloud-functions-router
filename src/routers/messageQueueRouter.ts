@@ -1,10 +1,10 @@
-import { CloudFunctionMessageQueueEventMessage, CloudFunctionTriggerEvent } from './../models/cloudFunctionEvent';
+import { CloudFunctionMessageQueueEventMessage, CloudFunctionTriggerEvent } from '../models/cloudFunctionEvent';
 
-import { CloudFunctionContext } from './../models/cloudFunctionContext';
-import { CloudFuntionResult } from './../models/cloudFunctionResult';
-import { MessageQueueRoute } from './../models/routes';
-import { log } from './../helpers/log';
-import { matchObjectPattern } from './../helpers/matchObjectPattern';
+import { CloudFunctionContext } from '../models/cloudFunctionContext';
+import { CloudFuntionResult } from '../models/cloudFunctionResult';
+import { MessageQueueRoute } from '../models/routes';
+import { log } from '../helpers/log';
+import { matchObjectPattern } from '../helpers/matchObjectPattern';
 
 const validateQueueId = (queueId: string | undefined, message: CloudFunctionMessageQueueEventMessage) => {
     if (queueId) {
