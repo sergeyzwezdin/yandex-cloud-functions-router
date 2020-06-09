@@ -26,3 +26,9 @@ jobs:
       run: npm run build
     - name: Test
       run: npm run test -- --ci --coverage
+    - name: Publish package to NPM
+      run: |
+        npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+        npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
