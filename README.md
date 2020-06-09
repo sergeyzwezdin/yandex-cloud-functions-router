@@ -49,6 +49,10 @@ export.handler = router({
   });
 ```
 
+Examples:
+* [Typescript project](https://github.com/sergeyzwezdin/yandex-cloud-functions-router/tree/master/examples/typescript)
+* [Javascript project](https://github.com/sergeyzwezdin/yandex-cloud-functions-router/tree/master/examples/javascript)
+
 # Requirements
 
 * Node 12+
