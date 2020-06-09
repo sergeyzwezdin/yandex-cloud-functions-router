@@ -10,7 +10,48 @@
 
 ## How it works
 
+Once you create a Node application that uses this package, you can assign some routes to the handlers. Next, you publish the Yandex Cloud Functions application and it will handle every request with the corresponding handler.
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    http: [
+      {
+        httpMethod: ['GET'],
+        handler: (event, context) => {
+          // Handle HTTP request
+          return {
+            statusCode: 200,
+            body: 'Hello from Yandex Cloud Functions'
+          };
+        }
+      },
+      {
+        httpMethod: ['POST'],
+        handler: (event, context) => {
+          // Handle HTTP request
+          return {
+            statusCode: 200,
+            body: 'Hello again'
+          };
+        }
+      }
+    ],
+    message_queue: [
+      {
+        queueId: 'a4wt2lnqwvjwnregbqbb',
+        handler: (event, context, message) => {
+          // Handle Message Queue item
+        }
+      }
+    ]
+  });
+```
+
 ## Requirements
+
+* Node 12+
 
 ## Usage
 
