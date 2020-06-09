@@ -8,7 +8,7 @@
 * Zero external dependencies.
 * Supports **Typescript out of the box**. 🤘
 
-## How it works
+# How it works
 
 Once you create a Node application that uses this package, you can assign some routes to the handlers. Next, you publish the Yandex Cloud Functions application and it will handle every request with the corresponding handler.
 
@@ -49,11 +49,11 @@ export.handler = router({
   });
 ```
 
-## Requirements
+# Requirements
 
 * Node 12+
 
-## Usage
+# Usage
 
 1. Install the package using npm:
 ```bash
@@ -73,16 +73,204 @@ export.handler = router({ /* ... */ });
 
 4. Now the function is able to handle requests 🎉
 
-### HTTP requests
+## HTTP requests
 
-### Timer trigger
+Mark the function as `public` to be able to make HTTP requests. Once it's done, you can access it by provided URL.
 
-### Message Queue trigger
+![yf-http](https://user-images.githubusercontent.com/800755/84103789-7b790380-aa2d-11ea-9341-17f86a5b8bff.png)
 
-### Object Storage trigger
+To handle incoming HTTP requests, add `http` key into the routes definition. `httpMethod` and `handler` params are mandatory for every route.
 
-### IoT Core trigger
 
-## License
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    http: [
+      {
+        httpMethod: ['GET'],           /* Filter by HTTP method (required). */
+        params: { },                   /* Filter by Query String params (optional). */
+        body: { },                     /* Filter by body content (optional). */
+        handler: (event, context) => { /* Handler function (required). */
+          // Handle HTTP GET request
+
+          return {
+            statusCode: 200
+          };
+        }
+      },
+      {
+        httpMethod: ['POST'],
+        handler: (event, context) => {
+          // Handle HTTP POST request
+
+          return {
+            statusCode: 200
+          };
+        }
+      }
+    ]
+  });
+```
+
+`handler` accepts two params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/function-invoke). The result that function returns passed directly to Yandex Cloud, so please use [Yandex Cloud Function response format](https://cloud.yandex.com/docs/functions/concepts/function-invoke#response).
+
+It is possible to filter requests by HTTP method, query params, and body content.
+
+### Filtering by HTTP method
+
+To filter requests by HTTP method, specify `httpMethod` property for a route. It's an array of HTTP methods that the current handle can process. It is **required** property.
+
+
+<details>
+<summary>Example</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    http: [
+      {
+        httpMethod: ['GET'],
+        handler: (event, context) => {
+          // Handle HTTP GET request
+
+          return {
+            statusCode: 200
+          };
+        }
+      },
+      {
+        httpMethod: ['POST'],
+        handler: (event, context) => {
+          // Handle HTTP POST request
+
+          return {
+            statusCode: 200
+          };
+        }
+      },
+      {
+        httpMethod: ['PUT'],
+        handler: (event, context) => {
+          // Handle HTTP PUT request
+
+          return {
+            statusCode: 200
+          };
+        }
+      }
+    ]
+  });
+```
+
+</p>
+</details>
+
+### Filtering by Query String params
+
+To filter requests by Query String params, specify `params` property for a route. It's a key-value dictionary (key is param name, value is param content). It is **optional** property.
+
+<details>
+<summary>Example</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    http: [
+      {
+        httpMethod: ['GET'],
+        params: {
+            'type': 'get'
+        },
+        handler: (event, context) => {
+          // Handle /?type=get requests
+
+          return {
+            statusCode: 200
+          };
+        }
+      },
+      {
+        httpMethod: ['GET'],
+        params: {
+            'type': 'find',
+            'context': '1'
+        },
+        handler: (event, context) => {
+          // Handle /?type=find&context=1 requests
+
+          return {
+            statusCode: 200
+          };
+        }
+      }
+    ]
+  });
+```
+
+</p>
+</details>
+
+### Filtering by Body content
+
+To filter requests by Body content, specify `body` property for a route. For the moment, only JSON content is supported. So to use the filter the request must contain `Content-Type: application/json` header and body should contain valid JSON object. If these criteria aren't met, the route will be ignored. It is **optional** property.
+
+<details>
+<summary>Example</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    http: [
+      {
+        httpMethod: ['POST'],
+        body: {
+            'type': 'add'
+        },
+        handler: (event, context) => {
+          // Handle requests with the following body content
+          // { "type": "add", ... }
+
+          return {
+            statusCode: 200
+          };
+        }
+      },
+      {
+        httpMethod: ['POST'],
+        body: {
+            'type': 'update'
+        },
+        handler: (event, context) => {
+          // Handle requests with the following body content
+          // { "type": "update", ... }
+
+          return {
+            statusCode: 200
+          };
+        }
+      }
+    ]
+  });
+```
+
+</p>
+</details>
+
+## Timer trigger
+
+## Message Queue trigger
+
+## Object Storage trigger
+
+## IoT Core trigger
+
+# License
 
 yandex-cloud-functions-router is released under the [MIT License](https://github.com/sergeyzwezdin/yandex-cloud-functions-router/blob/master/LICENSE).
