@@ -283,7 +283,7 @@ export.handler = router({
   });
 ```
 
-`handler` accepts two params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/function-invoke).
+`handler` accepts two params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/trigger/timer#timer-format).
 
 It is possible to filter events by trigger ID.
 
@@ -322,6 +322,145 @@ export.handler = router({
 </details>
 
 ## Message Queue trigger
+
+To handle Message Queue trigger events, add the `message_queue` key into the routes definition. The only `handler` param is mandatory for the route.
+
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    message_queue: [
+      {
+        queueId: 'a4wt2lnqwvjwnregbqbb',  /* Filter by queue identifier (optional). */
+        body: { },                        /* Filter by body content (optional). */
+        handler: (event, context) => {    /* Handler function (required). */
+          // Handle Message Queue trigger event
+        }
+      }
+    ]
+  });
+```
+
+`handler` accepts two params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/trigger/ymq-trigger#ymq-format).
+
+It is possible to filter events by queue ID or body content.
+
+### Filtering by Queue ID
+
+To filter events by Queue ID, specify `queueId` property for a route. It is an **optional** property.
+
+<details>
+<summary>Example</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    message_queue: [
+      {
+        queueId: 'a4wt2lnqwvjwnregbqbb',
+        handler: (event, context) => {
+          // Handle Message Queue trigger event
+          // for a4wt2lnqwvjwnregbqbb queue
+        }
+      },
+      {
+        queueId: 'b4wt2lnqwvjwnregbqbb',
+        handler: (event, context) => {
+          // Handle Message Queue trigger event
+          // for b4wt2lnqwvjwnregbqbb queue
+        }
+      }
+    ]
+  });
+```
+
+</p>
+</details>
+
+
+### Filtering by Body content
+
+To filter events by Body content, specify `body` property for a route. You can filter by JSON object properties **or** regular expression.
+
+To use JSON filtering the request must contain `Content-Type: application/json` header and body should contain valid JSON object. If these criteria aren't met, the route will be ignored.
+
+It is an **optional** property.
+
+<details>
+<summary>Example (JSON filter)</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    message_queue: [
+      {
+        body: {
+            json: {
+                type: 'add'
+            }
+        },
+        handler: (event, context) => {
+          // Handle Message Queue trigger event
+          // that has JSON object in body with type=add property.
+        }
+      },
+      {
+        body: {
+            json: {
+                type: 'update'
+            }
+        },
+        handler: (event, context) => {
+          // Handle Message Queue trigger event
+          // that has JSON object in body with type=update property.
+        }
+      }
+    ]
+  });
+```
+
+</p>
+</details>
+
+
+<details>
+<summary>Example (RegExp filter)</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    message_queue: [
+      {
+        body: {
+            pattern: /add/i
+        },
+        handler: (event, context) => {
+          // Handle Message Queue trigger event
+          // whose body contains "add" word
+        }
+      },
+      {
+        body: {
+            pattern: /update/i
+        },
+        handler: (event, context) => {
+          // Handle Message Queue trigger event
+          // whose body contains "update" word
+        }
+      }
+    ]
+  });
+```
+
+</p>
+</details>
 
 ## Object Storage trigger
 
