@@ -170,7 +170,11 @@ export.handler = router({
 
 ### Filtering by Query String params
 
-To filter requests by Query String params, specify `params` property for a route. It's a key-value dictionary (key is param name, value is param content). It is an **optional** property.
+To filter requests by Query String params, specify `params` property for a route. It's a key-value dictionary (key is param name).
+
+There are few ways how to hanlde these params - by exact match, substring, or regular expression.
+
+It is an **optional** property.
 
 <details>
 <summary>Example</summary>
@@ -184,7 +188,10 @@ export.handler = router({
       {
         httpMethod: ['GET'],
         params: {
-            'type': 'get'
+            type: {
+                type: 'exact',
+                value: 'get'
+            }
         },
         handler: (event, context) => {
           // Handle /?type=get requests
@@ -197,8 +204,46 @@ export.handler = router({
       {
         httpMethod: ['GET'],
         params: {
-            'type': 'find',
-            'context': '1'
+            type: {
+                type: 'substring',
+                value: 'qwerty'
+            }
+        },
+        handler: (event, context) => {
+          // Handle requests where "type" param contains "qwerty"
+
+          return {
+            statusCode: 200
+          };
+        }
+      },
+      {
+        httpMethod: ['GET'],
+        params: {
+            type: {
+                type: 'regexp',
+                pattern: /[0-9]+/i
+            }
+        },
+        handler: (event, context) => {
+          // Handle requests where "type" param contains numbers
+
+          return {
+            statusCode: 200
+          };
+        }
+      },
+      {
+        httpMethod: ['GET'],
+        params: {
+            type: {
+                type: 'exact',
+                value: 'find'
+            },
+            context: {
+                type: 'exact',
+                value: '1'
+            }
         },
         handler: (event, context) => {
           // Handle /?type=find&context=1 requests
