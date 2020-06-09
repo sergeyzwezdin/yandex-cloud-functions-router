@@ -119,7 +119,7 @@ It is possible to filter requests by HTTP method, query params, and body content
 
 ### Filtering by HTTP method
 
-To filter requests by HTTP method, specify `httpMethod` property for a route. It's an array of HTTP methods that the current handle can process. It is **required** property.
+To filter requests by HTTP method, specify `httpMethod` property for a route. It's an array of HTTP methods that the current handle can process. It is a **required** property.
 
 
 <details>
@@ -170,7 +170,7 @@ export.handler = router({
 
 ### Filtering by Query String params
 
-To filter requests by Query String params, specify `params` property for a route. It's a key-value dictionary (key is param name, value is param content). It is **optional** property.
+To filter requests by Query String params, specify `params` property for a route. It's a key-value dictionary (key is param name, value is param content). It is an **optional** property.
 
 <details>
 <summary>Example</summary>
@@ -217,7 +217,7 @@ export.handler = router({
 
 ### Filtering by Body content
 
-To filter requests by Body content, specify `body` property for a route. For the moment, only JSON content is supported. So to use the filter the request must contain `Content-Type: application/json` header and body should contain valid JSON object. If these criteria aren't met, the route will be ignored. It is **optional** property.
+To filter requests by Body content, specify `body` property for a route. For the moment, only JSON content is supported. So to use the filter the request must contain `Content-Type: application/json` header and body should contain valid JSON object. If these criteria aren't met, the route will be ignored. It is an **optional** property.
 
 <details>
 <summary>Example</summary>
@@ -264,6 +264,62 @@ export.handler = router({
 </details>
 
 ## Timer trigger
+
+To handle Timer trigger events, add the `timer` key into the routes definition. The only `handler` param is mandatory for the route.
+
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    timer: [
+      {
+        triggerId: 'a4wt2lnqwvjwnregbqbb', /* Filter by trigger identifier (optional). */
+        handler: (event, context) => {     /* Handler function (required). */
+          // Handle Timer trigger event
+        }
+      }
+    ]
+  });
+```
+
+`handler` accepts two params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/function-invoke).
+
+It is possible to filter events by trigger ID.
+
+### Filtering by Trigger ID
+
+To filter events by Trigger ID, specify `triggerId` property for a route. It is an **optional** property.
+
+<details>
+<summary>Example</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    timer: [
+      {
+        triggerId: 'a4wt2lnqwvjwnregbqbb',
+        handler: (event, context) => {
+          // Handle Timer trigger event
+          // for a4wt2lnqwvjwnregbqbb timer
+        }
+      },
+      {
+        triggerId: 'b4wt2lnqwvjwnregbqbb',
+        handler: (event, context) => {
+          // Handle Timer trigger event
+          // for b4wt2lnqwvjwnregbqbb timer
+        }
+      },
+    ]
+  });
+```
+
+</p>
+</details>
 
 ## Message Queue trigger
 
