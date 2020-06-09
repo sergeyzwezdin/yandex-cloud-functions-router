@@ -6,4 +6,24 @@
 * Handles **CORS** for HTTP requests.
 * **Can filter requests** by HTTP method, params, body, queue identifier, and other trigger-specific params.
 * Zero external dependencies.
-* Supports **Typescript out of the box**.
+* Supports **Typescript out of the box**. 🤘
+
+## How it works
+
+## Requirements
+
+## Usage
+
+### HTTP requests
+
+### Timer trigger
+
+### Message Queue trigger
+
+### Object Storage trigger
+
+### IoT Core trigger
+
+## License
+
+yandex-cloud-functions-router is released under the [MIT License](https://github.com/sergeyzwezdin/yandex-cloud-functions-router/blob/master/LICENSE).
