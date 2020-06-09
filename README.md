@@ -55,6 +55,24 @@ export.handler = router({
 
 ## Usage
 
+1. Install the package using npm:
+```bash
+$ npm install yandex-cloud-functions-router
+```
+
+2. Create router handler and export it from the main module (for example, in `index.js`):
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({ /* ... */ });
+```
+
+3. Create a new Yandex Cloud Function in [the developer console](https://console.cloud.yandex.com/). Use `nodejs12`/`nodejs12-preview` as a runtime environment. Also, don't forget to specify `Entrypoint` for the function.
+
+![yf-create](https://user-images.githubusercontent.com/800755/84101085-a744bb00-aa26-11ea-9ff4-3b80affca6c7.png)
+
+4. Now the function is able to handle requests 🎉
+
 ### HTTP requests
 
 ### Timer trigger
