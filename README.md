@@ -263,6 +263,37 @@ export.handler = router({
 </p>
 </details>
 
+### CORS
+
+To handle [CORS requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) add second param to the `router` function:
+
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    http: [
+      {
+        httpMethod: ['POST'],
+        handler: (event, context) => {
+          return {
+            statusCode: 200
+          };
+        }
+      }
+    ]
+  },
+  {
+    cors: {
+      enable: true,                               /* Wheter CORS support is enabled (required). */
+      allowedOrigins: ['http://localhost:5000'],  /* Origins that allowed to request the function (optional). */
+      allowedMethods: ['GET', 'POST', 'PUT'],     /* Allowed methods that will be put into Access-Control-Allow-Methods (optional). */
+      allowedHeaders: ['X-Test'],                 /* Allowed custom headers that will be put into Access-Control-Allow-Headers (optional). */
+      allowCredentials: true                      /* Whether to add Access-Control-Allow-Credentials to the response (optional). */
+    }
+  );
+```
+
 ## Timer trigger
 
 To handle Timer trigger events, add the `timer` key into the routes definition. The only `handler` param is mandatory for the route.
