@@ -283,7 +283,7 @@ export.handler = router({
   });
 ```
 
-`handler` accepts two params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/trigger/timer#timer-format).
+`handler` accepts three params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/trigger/timer#timer-format).
 
 It is possible to filter events by trigger ID.
 
@@ -342,7 +342,7 @@ export.handler = router({
   });
 ```
 
-`handler` accepts two params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/trigger/ymq-trigger#ymq-format).
+`handler` accepts three params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/trigger/ymq-trigger#ymq-format).
 
 It is possible to filter events by queue ID or body content.
 
@@ -484,7 +484,7 @@ export.handler = router({
   });
 ```
 
-`handler` accepts two params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/trigger/os-trigger#ymq-format).
+`handler` accepts three params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/trigger/os-trigger#ymq-format).
 
 It is possible to filter events by type, bucket identifier, and object identifier.
 
@@ -597,7 +597,7 @@ export.handler = router({
   });
 ```
 
-`handler` accepts two params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/trigger/iot-core-trigger#iot-format).
+`handler` accepts three params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/trigger/iot-core-trigger#iot-format).
 
 It is possible to filter events by registry identifier, device identifier, and MQTT topic.
 
