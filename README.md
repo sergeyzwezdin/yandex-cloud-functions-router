@@ -274,8 +274,8 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     timer: [
       {
-        triggerId: 'a4wt2lnqwvjwnregbqbb', /* Filter by trigger identifier (optional). */
-        handler: (event, context) => {     /* Handler function (required). */
+        triggerId: 'a4wt2lnqwvjwnregbqbb',       /* Filter by trigger identifier (optional). */
+        handler: (event, context, message) => {  /* Handler function (required). */
           // Handle Timer trigger event
         }
       }
@@ -302,14 +302,14 @@ export.handler = router({
     timer: [
       {
         triggerId: 'a4wt2lnqwvjwnregbqbb',
-        handler: (event, context) => {
+        handler: (event, context, message) => {
           // Handle Timer trigger event
           // for a4wt2lnqwvjwnregbqbb timer
         }
       },
       {
         triggerId: 'b4wt2lnqwvjwnregbqbb',
-        handler: (event, context) => {
+        handler: (event, context, message) => {
           // Handle Timer trigger event
           // for b4wt2lnqwvjwnregbqbb timer
         }
@@ -332,9 +332,9 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     message_queue: [
       {
-        queueId: 'a4wt2lnqwvjwnregbqbb',  /* Filter by queue identifier (optional). */
-        body: { },                        /* Filter by body content (optional). */
-        handler: (event, context) => {    /* Handler function (required). */
+        queueId: 'a4wt2lnqwvjwnregbqbb',         /* Filter by queue identifier (optional). */
+        body: { },                               /* Filter by body content (optional). */
+        handler: (event, context, message) => {  /* Handler function (required). */
           // Handle Message Queue trigger event
         }
       }
@@ -361,14 +361,14 @@ export.handler = router({
     message_queue: [
       {
         queueId: 'a4wt2lnqwvjwnregbqbb',
-        handler: (event, context) => {
+        handler: (event, context, message) => {
           // Handle Message Queue trigger event
           // for a4wt2lnqwvjwnregbqbb queue
         }
       },
       {
         queueId: 'b4wt2lnqwvjwnregbqbb',
-        handler: (event, context) => {
+        handler: (event, context, message) => {
           // Handle Message Queue trigger event
           // for b4wt2lnqwvjwnregbqbb queue
         }
@@ -404,7 +404,7 @@ export.handler = router({
                 type: 'add'
             }
         },
-        handler: (event, context) => {
+        handler: (event, context, message) => {
           // Handle Message Queue trigger event
           // that has JSON object in body with type=add property.
         }
@@ -415,7 +415,7 @@ export.handler = router({
                 type: 'update'
             }
         },
-        handler: (event, context) => {
+        handler: (event, context, message) => {
           // Handle Message Queue trigger event
           // that has JSON object in body with type=update property.
         }
@@ -441,7 +441,7 @@ export.handler = router({
         body: {
             pattern: /add/i
         },
-        handler: (event, context) => {
+        handler: (event, context, message) => {
           // Handle Message Queue trigger event
           // whose body contains "add" word
         }
@@ -450,7 +450,7 @@ export.handler = router({
         body: {
             pattern: /update/i
         },
-        handler: (event, context) => {
+        handler: (event, context, message) => {
           // Handle Message Queue trigger event
           // whose body contains "update" word
         }
@@ -463,6 +463,121 @@ export.handler = router({
 </details>
 
 ## Object Storage trigger
+
+To handle Object Storage trigger events, add the `object_storage` key into the routes definition. The only `handler` param is mandatory for the route.
+
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    object_storage: [
+      {
+        type: 'create',                          /* Filter by operation type (optional). */
+        bucketId: 's3',                          /* Filter by bucket identifier (optional). */
+        objectId: '1.jpg',                       /* Filter by object identifier (optional). */
+        handler: (event, context, message) => {  /* Handler function (required). */
+          // Handle Object Storage trigger event
+        }
+      }
+    ]
+  });
+```
+
+`handler` accepts two params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/trigger/os-trigger#ymq-format).
+
+It is possible to filter events by type, bucket identifier, and object identifier.
+
+### Filtering by Type
+
+To filter events by type, specify `type` property for a route. Possible values for this filter are `create`, `update`, or `delete`. It is an **optional** property.
+
+<details>
+<summary>Example</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+export.handler = router({
+    object_storage: [
+      {
+        type: 'create',
+        handler: (event, context, message) => {
+          // Handle creating new object in Object Storage
+        }
+      },
+      {
+        type: 'update',
+        handler: (event, context, message) => {
+          // Handle updating new object in Object Storage
+        }
+      },
+      {
+        type: 'delete',
+        handler: (event, context, message) => {
+          // Handle deleting new object in Object Storage
+        }
+      }
+    ]
+  });
+
+```
+
+</p>
+</details>
+
+### Filtering by Bucket ID
+
+To filter events by bucket identifier, specify `bucketId` property for a route. It is an **optional** property.
+
+<details>
+<summary>Example</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+export.handler = router({
+    object_storage: [
+      {
+        bucketId: 's3',
+        handler: (event, context, message) => {
+          // Handle event in "s3" bucket
+        }
+      }
+    ]
+  });
+
+```
+
+</p>
+</details>
+
+### Filtering by Object ID
+
+To filter events by object identifier, specify `objectId` property for a route. It is an **optional** property.
+
+<details>
+<summary>Example</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+export.handler = router({
+    object_storage: [
+      {
+        objectId: '1.jpg',
+        handler: (event, context, message) => {
+          // Handle event in "1.jpg" object
+        }
+      }
+    ]
+  });
+
+```
+
+</p>
+</details>
+
 
 ## IoT Core trigger
 
