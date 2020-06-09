@@ -520,7 +520,6 @@ export.handler = router({
       }
     ]
   });
-
 ```
 
 </p>
@@ -546,7 +545,6 @@ export.handler = router({
       }
     ]
   });
-
 ```
 
 </p>
@@ -572,14 +570,114 @@ export.handler = router({
       }
     ]
   });
-
 ```
 
 </p>
 </details>
 
-
 ## IoT Core trigger
+
+To handle IoT Core message trigger events, add the `iot_message` key into the routes definition. The only `handler` param is mandatory for the route.
+
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    iot_message: [
+      {
+        registryId: 'arenou2oj4ct42eq8g3n',                 /* Filter by Registry ID (optional). */
+        deviceId: 'areqjd6un3afc3cefcvm',                   /* Filter by Device ID (optional). */
+        mqttTopic: '$devices/areqjd6un3afc3cefcvm/events',  /* Filter by MQTT Topic (optional). */
+        handler: (event, context, message) => {             /* Handler function (required). */
+          // Handle IoT Core message trigger event
+        }
+      }
+    ]
+  });
+```
+
+`handler` accepts two params that [came from Yandex Cloud](https://cloud.yandex.com/docs/functions/concepts/trigger/iot-core-trigger#iot-format).
+
+It is possible to filter events by registry identifier, device identifier, and MQTT topic.
+
+### Filtering by Registry ID
+
+To filter events by the registry, specify `registryId` property for a route. It is an **optional** property.
+
+<details>
+<summary>Example</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+export.handler = router({
+    iot_message: [
+      {
+        registryId: 'arenou2oj4ct42eq8g3n',
+        handler: (event, context, message) => {
+          // Handle IoT Core message trigger event
+          // for arenou2oj4ct42eq8g3n registry
+        }
+      }
+    ]
+  });
+```
+
+</p>
+</details>
+
+### Filtering by Device ID
+
+To filter events by the device, specify `deviceId` property for a route. It is an **optional** property.
+
+<details>
+<summary>Example</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+export.handler = router({
+    iot_message: [
+      {
+        deviceId: 'areqjd6un3afc3cefcvm',
+        handler: (event, context, message) => {
+          // Handle IoT Core message trigger event
+          // for areqjd6un3afc3cefcvm device
+        }
+      }
+    ]
+  });
+```
+
+</p>
+</details>
+
+### Filtering by MQTT Topic
+
+To filter events by MQTT topic, specify `mqttTopic` property for a route. It is an **optional** property.
+
+<details>
+<summary>Example</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+export.handler = router({
+    iot_message: [
+      {
+        mqttTopic: '$devices/areqjd6un3afc3cefcvm/events',
+        handler: (event, context, message) => {
+          // Handle IoT Core message trigger event
+          // by $devices/areqjd6un3afc3cefcvm/events topic
+        }
+      }
+    ]
+  });
+```
+
+</p>
+</details>
 
 # License
 
