@@ -1,7 +1,7 @@
-import { matchObjectPattern } from './../matchObjectPattern';
+import { matchObjectPattern } from '../matchObjectPattern';
 
 describe('matchObjectPattern', () => {
-    test('matches object', () => {
+    it('matches object', () => {
         // Arrange
         const data = {
             type: 'add',
@@ -21,7 +21,7 @@ describe('matchObjectPattern', () => {
         expect(result).toBeTruthy();
     });
 
-    test('matches object (deep)', () => {
+    it('matches object (deep)', () => {
         // Arrange
         const data = {
             type: {
@@ -49,7 +49,7 @@ describe('matchObjectPattern', () => {
         expect(result).toBeTruthy();
     });
 
-    test('matches object by 2 params', () => {
+    it('matches object by 2 params', () => {
         // Arrange
         const data = {
             type: 'add',

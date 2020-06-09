@@ -1,7 +1,7 @@
-import { CloudFunctionObjectStorageEventMessage, CloudFunctionTriggerEvent } from './../cloudFunctionEvent';
+import { CloudFunctionObjectStorageEventMessage, CloudFunctionTriggerEvent } from '../cloudFunctionEvent';
 
-import { CloudFunctionContext } from './../cloudFunctionContext';
-import { CloudFuntionResult } from './../cloudFunctionResult';
+import { CloudFunctionContext } from '../cloudFunctionContext';
+import { CloudFuntionResult } from '../cloudFunctionResult';
 
 type ObjectStorageRoute = {
     type?: ObjectStorageRouteTypeValidate;

@@ -1,8 +1,8 @@
 /* istanbul ignore file */
 /* ignore file coverage */
 
-import { CloudFunctionContext } from './../models/cloudFunctionContext';
-import { CloudFunctionEvent } from './../models/cloudFunctionEvent';
+import { CloudFunctionContext } from '../models/cloudFunctionContext';
+import { CloudFunctionEvent } from '../models/cloudFunctionEvent';
 import { HttpMethod } from '../models/httpMethod';
 
 const httpMethodEvent: (data: {

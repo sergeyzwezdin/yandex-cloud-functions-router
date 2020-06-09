@@ -1,15 +1,30 @@
-import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from './../models/cloudFunctionEvent';
-import { eventContext, timerEvent } from './../__data__/router.data';
+import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from '../models/cloudFunctionEvent';
+import { eventContext, timerEvent } from '../__data__/router.data';
 
-import { CloudFunctionContext } from './../models/cloudFunctionContext';
-import { consoleSpy } from './../__helpers__/consoleSpy';
-import { router } from './../router';
+import { CloudFunctionContext } from '../models/cloudFunctionContext';
+import { consoleSpy } from '../__helpers__/consoleSpy';
+import { router } from '../router';
 
 describe('router', () => {
     describe('timer', () => {
-        test('handles any request', async () => {
+        let consoleMock: {
+            log: jest.SpyInstance;
+            info: jest.SpyInstance;
+            warn: jest.SpyInstance;
+            error: jest.SpyInstance;
+            mockRestore: () => void;
+        };
+
+        beforeEach(() => {
+            consoleMock = consoleSpy();
+        });
+
+        afterEach(() => {
+            consoleMock.mockRestore();
+        });
+
+        it('handles any request', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const handler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionTimerEventMessage) => ({
                     statusCode: 200
@@ -35,13 +50,10 @@ describe('router', () => {
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing timer trigger message Trigger Id: b4wt2lnqwvjwnregbqbb`]
             ]);
-
-            consoleMock.mockRestore();
         });
 
-        test('handles request by trigger ID', async () => {
+        it('handles request by trigger ID', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const defaultHandler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionTimerEventMessage) => ({
                     statusCode: 200
@@ -81,13 +93,10 @@ describe('router', () => {
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing timer trigger message Trigger Id: b4wt2lnqwvjwnregbqbb`]
             ]);
-
-            consoleMock.mockRestore();
         });
 
-        test('throws an error when no routes defined', async () => {
+        it('throws an error when no routes defined', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const route = router({});
             const event = timerEvent({ triggerId: 'b4wt2lnqwvjwnregbqbb' });
             const context = eventContext();
@@ -101,13 +110,10 @@ describe('router', () => {
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing timer trigger message Trigger Id: b4wt2lnqwvjwnregbqbb`]
             ]);
             expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
-
-            consoleMock.mockRestore();
         });
 
-        test('throws an error when no routes matched', async () => {
+        it('throws an error when no routes matched', async () => {
             // Arrange
-            const consoleMock = consoleSpy();
             const route = router({
                 timer: [
                     {
@@ -136,8 +142,6 @@ describe('router', () => {
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing timer trigger message Trigger Id: b4wt2lnqwvjwnregbqbb`]
             ]);
             expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
-
-            consoleMock.mockRestore();
         });
     });
 });

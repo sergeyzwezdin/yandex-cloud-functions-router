@@ -1,7 +1,7 @@
-import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from './../cloudFunctionEvent';
+import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from '../cloudFunctionEvent';
 
-import { CloudFunctionContext } from './../cloudFunctionContext';
-import { CloudFuntionResult } from './../cloudFunctionResult';
+import { CloudFunctionContext } from '../cloudFunctionContext';
+import { CloudFuntionResult } from '../cloudFunctionResult';
 
 type TimerRoute = {
     triggerId?: string;

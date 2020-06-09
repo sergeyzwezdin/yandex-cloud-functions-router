@@ -10,6 +10,7 @@ import {
 
 import { CloudFunctionContext } from './models/cloudFunctionContext';
 import { CloudFuntionResult } from './models/cloudFunctionResult';
+import { RouterOptions } from './models/routerOptions';
 import { Routes } from './models/routes';
 import { httpRouter } from './routers/httpRouter';
 import { iotMessageRouter } from './routers/iotMessageRouter';
@@ -18,9 +19,13 @@ import { messageQueueRouter } from './routers/messageQueueRouter';
 import { objectStorageRouter } from './routers/objectStorageRouter';
 import { timerRouter } from './routers/timerRouter';
 
-const router: (routes: Routes) => (event: CloudFunctionEvent, context: CloudFunctionContext) => Promise<CloudFuntionResult> = (
-    routes
-) => async (event, context) => {
+const router: (
+    routes: Routes,
+    options?: RouterOptions
+) => (event: CloudFunctionEvent, context: CloudFunctionContext) => Promise<CloudFuntionResult> = (routes, options) => async (
+    event,
+    context
+) => {
     if (isHttpEvent(event)) {
         log('INFO', context.requestId, '', {
             'HTTP Method': event.httpMethod,
@@ -29,7 +34,7 @@ const router: (routes: Routes) => (event: CloudFunctionEvent, context: CloudFunc
             Headers: event.headers
         });
 
-        return await httpRouter(routes.http || [], event, context);
+        return await httpRouter(routes.http || [], event, context, options);
     } else if (isTriggerEvent(event)) {
         const errors: Error[] = [];
 

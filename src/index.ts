@@ -1,4 +1,5 @@
 export * from './models/routes';
+export * from './models/routerOptions';
 export * from './models/httpMethod';
 export * from './models/cloudFunctionEvent';
 export * from './models/cloudFunctionContext';
