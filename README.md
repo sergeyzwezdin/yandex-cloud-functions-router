@@ -285,7 +285,7 @@ export.handler = router({
   },
   {
     cors: {
-      enable: true,                               /* Wheter CORS support is enabled (required). */
+      enable: true,                               /* Whether CORS support is enabled (required). */
       allowedOrigins: ['http://localhost:5000'],  /* Origins that allowed to request the function (optional). */
       allowedMethods: ['GET', 'POST', 'PUT'],     /* Allowed methods that will be put into Access-Control-Allow-Methods (optional). */
       allowedHeaders: ['X-Test'],                 /* Allowed custom headers that will be put into Access-Control-Allow-Headers (optional). */
