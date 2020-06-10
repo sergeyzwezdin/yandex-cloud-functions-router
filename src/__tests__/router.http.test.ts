@@ -1,10 +1,11 @@
 jest.mock('../helpers/matchObjectPattern');
 
+import { HttpParamNotSupportedTypeRouteError, NoMatchedRouteError } from '../models/routerError';
 import { eventContext, httpMethodEvent } from '../__data__/router.data';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
 import { CloudFunctionHttpEvent } from '../models/cloudFunctionEvent';
-import { HttpRouteParamValidateType } from '../models/routes';
+import { HttpRouteParamValidateType } from '../models/routes/httpRoute';
 import { consoleSpy } from '../__helpers__/consoleSpy';
 import { matchObjectPattern } from '../helpers/matchObjectPattern';
 import { mocked } from 'ts-jest/utils';
@@ -65,20 +66,25 @@ describe('router', () => {
             const postHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
-            const route = router({
-                http: [
-                    {
-                        // @ts-ignore
-                        httpMethod: ['Post'], // intentionally case-insensitive method name check
-                        handler: postHandler
-                    },
-                    {
-                        // @ts-ignore
-                        httpMethod: ['Get'], // intentionally case-insensitive method name check
-                        handler: getHandler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    http: [
+                        {
+                            // @ts-ignore
+                            httpMethod: ['Post'], // intentionally case-insensitive method name check
+                            handler: postHandler
+                        },
+                        {
+                            // @ts-ignore
+                            httpMethod: ['Get'], // intentionally case-insensitive method name check
+                            handler: getHandler
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
             const event = httpMethodEvent({ httpMethod: 'GET' });
             const context = eventContext();
 
@@ -105,20 +111,25 @@ describe('router', () => {
             const postHandler = jest.fn(async (event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
-            const route = router({
-                http: [
-                    {
-                        // @ts-ignore
-                        httpMethod: ['Post'], // intentionally case-insensitive method name check
-                        handler: postHandler
-                    },
-                    {
-                        // @ts-ignore
-                        httpMethod: ['Get'], // intentionally case-insensitive method name check
-                        handler: getHandler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    http: [
+                        {
+                            // @ts-ignore
+                            httpMethod: ['Post'], // intentionally case-insensitive method name check
+                            handler: postHandler
+                        },
+                        {
+                            // @ts-ignore
+                            httpMethod: ['Get'], // intentionally case-insensitive method name check
+                            handler: getHandler
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
             const event = httpMethodEvent({ httpMethod: 'POST' });
             const context = eventContext();
 
@@ -145,33 +156,38 @@ describe('router', () => {
             const paramsHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
-            const route = router({
-                http: [
-                    {
-                        params: {
-                            kind: {
-                                type: 'exact' as HttpRouteParamValidateType,
-                                value: 'test2'
-                            }
+            const route = router(
+                {
+                    http: [
+                        {
+                            params: {
+                                kind: {
+                                    type: 'exact' as HttpRouteParamValidateType,
+                                    value: 'test2'
+                                }
+                            },
+                            handler: defaultHandler
                         },
-                        handler: defaultHandler
-                    },
-                    {
-                        // @ts-ignore
-                        httpMethod: ['Post'], // intentionally case-insensitive method name check
-                        params: {
-                            kind: {
-                                type: 'exact' as HttpRouteParamValidateType,
-                                value: 'test'
-                            }
+                        {
+                            // @ts-ignore
+                            httpMethod: ['Post'], // intentionally case-insensitive method name check
+                            params: {
+                                kind: {
+                                    type: 'exact' as HttpRouteParamValidateType,
+                                    value: 'test'
+                                }
+                            },
+                            handler: paramsHandler
                         },
-                        handler: paramsHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
 
             const event = httpMethodEvent({
                 httpMethod: 'POST',
@@ -206,42 +222,47 @@ describe('router', () => {
             const paramsHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
-            const route = router({
-                http: [
-                    {
-                        params: {
-                            kind: {
-                                type: 'substring' as HttpRouteParamValidateType,
-                                value: 'test2'
-                            }
+            const route = router(
+                {
+                    http: [
+                        {
+                            params: {
+                                kind: {
+                                    type: 'substring' as HttpRouteParamValidateType,
+                                    value: 'test2'
+                                }
+                            },
+                            handler: defaultHandler
                         },
-                        handler: defaultHandler
-                    },
-                    {
-                        params: {
-                            kind: {
-                                type: 'substring' as HttpRouteParamValidateType,
-                                value: '' // empty values are ignored
-                            }
+                        {
+                            params: {
+                                kind: {
+                                    type: 'substring' as HttpRouteParamValidateType,
+                                    value: '' // empty values are ignored
+                                }
+                            },
+                            handler: defaultHandler
                         },
-                        handler: defaultHandler
-                    },
-                    {
-                        // @ts-ignore
-                        httpMethod: ['Post'], // intentionally case-insensitive method name check
-                        params: {
-                            kind: {
-                                type: 'substring' as HttpRouteParamValidateType,
-                                value: 'test'
-                            }
+                        {
+                            // @ts-ignore
+                            httpMethod: ['Post'], // intentionally case-insensitive method name check
+                            params: {
+                                kind: {
+                                    type: 'substring' as HttpRouteParamValidateType,
+                                    value: 'test'
+                                }
+                            },
+                            handler: paramsHandler
                         },
-                        handler: paramsHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
             const event = httpMethodEvent({
                 httpMethod: 'POST',
                 queryStringParameters: {
@@ -275,42 +296,47 @@ describe('router', () => {
             const paramsHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
-            const route = router({
-                http: [
-                    {
-                        params: {
-                            kind: {
-                                type: 'regexp' as HttpRouteParamValidateType,
-                                pattern: /test2/i
-                            }
+            const route = router(
+                {
+                    http: [
+                        {
+                            params: {
+                                kind: {
+                                    type: 'regexp' as HttpRouteParamValidateType,
+                                    pattern: /test2/i
+                                }
+                            },
+                            handler: defaultHandler
                         },
-                        handler: defaultHandler
-                    },
-                    {
-                        params: {
-                            kind: {
-                                type: 'regexp' as HttpRouteParamValidateType,
-                                pattern: undefined // undefined patterns are ignored
-                            }
+                        {
+                            params: {
+                                kind: {
+                                    type: 'regexp' as HttpRouteParamValidateType,
+                                    pattern: undefined // undefined patterns are ignored
+                                }
+                            },
+                            handler: defaultHandler
                         },
-                        handler: defaultHandler
-                    },
-                    {
-                        // @ts-ignore
-                        httpMethod: ['Post'], // intentionally case-insensitive method name check
-                        params: {
-                            kind: {
-                                type: 'regexp' as HttpRouteParamValidateType,
-                                pattern: /test/i
-                            }
+                        {
+                            // @ts-ignore
+                            httpMethod: ['Post'], // intentionally case-insensitive method name check
+                            params: {
+                                kind: {
+                                    type: 'regexp' as HttpRouteParamValidateType,
+                                    pattern: /test/i
+                                }
+                            },
+                            handler: paramsHandler
                         },
-                        handler: paramsHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
             const event = httpMethodEvent({
                 httpMethod: 'POST',
                 queryStringParameters: {
@@ -338,19 +364,24 @@ describe('router', () => {
 
         it('throws an error on invalid param type', async () => {
             // Arrange
-            const route = router({
-                http: [
-                    {
-                        params: {
-                            kind: {
-                                // @ts-ignore
-                                type: 'unknown'
-                            }
-                        },
-                        handler: () => ({ statusCode: 200 })
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    http: [
+                        {
+                            params: {
+                                kind: {
+                                    // @ts-ignore
+                                    type: 'unknown'
+                                }
+                            },
+                            handler: () => ({ statusCode: 200 })
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
             const event = httpMethodEvent({ httpMethod: 'GET' });
             const context = eventContext();
 
@@ -358,7 +389,52 @@ describe('router', () => {
             const result = route(event, context);
 
             // Assert
-            await expect(result).rejects.toThrow(new Error('Not supported type: unknown'));
+            await expect(result).rejects.toThrow(HttpParamNotSupportedTypeRouteError);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+        });
+
+        it('throws an error on invalid param type (error handling)', async () => {
+            // Arrange
+            const route = router(
+                {
+                    http: [
+                        {
+                            params: {
+                                kind: {
+                                    // @ts-ignore
+                                    type: 'unknown'
+                                }
+                            },
+                            handler: () => ({ statusCode: 200 })
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {
+                        custom: [
+                            {
+                                error: /not supported type/i,
+                                result: () => ({
+                                    statusCode: 500
+                                })
+                            }
+                        ]
+                    }
+                }
+            );
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(500);
+            }
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
             ]);
@@ -372,28 +448,33 @@ describe('router', () => {
             const bodyHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
-            const route = router({
-                http: [
-                    {
-                        // @ts-ignore
-                        httpMethod: ['Get'], // intentionally case-insensitive method name check
-                        handler: defaultHandler
-                    },
-                    {
-                        // @ts-ignore
-                        httpMethod: ['Post'], // intentionally case-insensitive method name check
-                        body: {
-                            json: {
-                                type: 'update'
-                            }
+            const route = router(
+                {
+                    http: [
+                        {
+                            // @ts-ignore
+                            httpMethod: ['Get'], // intentionally case-insensitive method name check
+                            handler: defaultHandler
                         },
-                        handler: bodyHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+                        {
+                            // @ts-ignore
+                            httpMethod: ['Post'], // intentionally case-insensitive method name check
+                            body: {
+                                json: {
+                                    type: 'update'
+                                }
+                            },
+                            handler: bodyHandler
+                        },
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
             const event = httpMethodEvent({
                 httpMethod: 'POST',
                 headers: {
@@ -433,21 +514,26 @@ describe('router', () => {
             const bodyHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
-            const route = router({
-                http: [
-                    {
-                        body: {
-                            json: {
-                                type: 'update'
-                            }
+            const route = router(
+                {
+                    http: [
+                        {
+                            body: {
+                                json: {
+                                    type: 'update'
+                                }
+                            },
+                            handler: bodyHandler
                         },
-                        handler: bodyHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
             const event = httpMethodEvent({
                 httpMethod: 'POST',
                 body: JSON.stringify({
@@ -482,17 +568,22 @@ describe('router', () => {
             const bodyHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
-            const route = router({
-                http: [
-                    {
-                        body: {},
-                        handler: bodyHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    http: [
+                        {
+                            body: {},
+                            handler: bodyHandler
+                        },
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
             const event = httpMethodEvent({
                 httpMethod: 'POST',
                 headers: {
@@ -532,21 +623,26 @@ describe('router', () => {
             const bodyHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
                 statusCode: 200
             }));
-            const route = router({
-                http: [
-                    {
-                        body: {
-                            json: {
-                                type: 'update'
-                            }
+            const route = router(
+                {
+                    http: [
+                        {
+                            body: {
+                                json: {
+                                    type: 'update'
+                                }
+                            },
+                            handler: bodyHandler
                         },
-                        handler: bodyHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
             const event = httpMethodEvent({
                 httpMethod: 'POST',
                 headers: {
@@ -580,18 +676,23 @@ describe('router', () => {
             });
 
             // Arrange
-            const route = router({
-                http: [
-                    {
-                        body: {
-                            json: {}
-                        },
-                        handler: () => ({
-                            statusCode: 200
-                        })
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    http: [
+                        {
+                            body: {
+                                json: {}
+                            },
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
             const event = httpMethodEvent({
                 httpMethod: 'POST',
                 headers: {
@@ -616,9 +717,74 @@ describe('router', () => {
             mocked(matchObjectPattern).mockReset();
         });
 
+        it('throws an error on unexpected error while validate body (error handling)', async () => {
+            // Setup
+            mocked(matchObjectPattern).mockImplementationOnce((a: object, b: object) => {
+                throw new Error('Unexpected error.');
+            });
+
+            // Arrange
+            const route = router(
+                {
+                    http: [
+                        {
+                            body: {
+                                json: {}
+                            },
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {
+                        custom: [
+                            {
+                                error: 'Unexpected error.',
+                                result: () => ({
+                                    statusCode: 501
+                                })
+                            }
+                        ]
+                    }
+                }
+            );
+            const event = httpMethodEvent({
+                httpMethod: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(501);
+            }
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 2 Query: {} Headers: {"User-Agent":"jest","Content-Type":"application/json"}`
+                ]
+            ]);
+
+            // Teardown
+            mocked(matchObjectPattern).mockReset();
+        });
+
         it('throws an error when no routes defined', async () => {
             // Arrange
-            const route = router({});
+            const route = router(
+                {},
+                {
+                    errorHandling: {}
+                }
+            );
             const event = httpMethodEvent({ httpMethod: 'GET' });
             const context = eventContext();
 
@@ -626,7 +792,37 @@ describe('router', () => {
             const result = route(event, context);
 
             // Assert
-            await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+
+            await expect(result).rejects.toThrow(NoMatchedRouteError);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+        });
+
+        it('throws an error when no routes defined (error handling)', async () => {
+            // Arrange
+            const route = router(
+                {},
+                {
+                    errorHandling: {
+                        notFound: () => ({
+                            statusCode: 500
+                        })
+                    }
+                }
+            );
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(500);
+            }
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
             ]);
@@ -635,19 +831,24 @@ describe('router', () => {
 
         it('throws an error when no routes matched', async () => {
             // Arrange
-            const route = router({
-                http: [
-                    {
-                        params: {
-                            kind: {
-                                type: 'exact',
-                                value: 'test'
-                            }
-                        },
-                        handler: () => ({ statusCode: 200 })
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    http: [
+                        {
+                            params: {
+                                kind: {
+                                    type: 'exact',
+                                    value: 'test'
+                                }
+                            },
+                            handler: () => ({ statusCode: 200 })
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
             const event = httpMethodEvent({ httpMethod: 'GET' });
             const context = eventContext();
 
@@ -655,7 +856,48 @@ describe('router', () => {
             const result = route(event, context);
 
             // Assert
-            await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            await expect(result).rejects.toThrow(NoMatchedRouteError);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+        });
+
+        it('throws an error when no routes matched (error handling)', async () => {
+            // Arrange
+            const route = router(
+                {
+                    http: [
+                        {
+                            params: {
+                                kind: {
+                                    type: 'exact',
+                                    value: 'test'
+                                }
+                            },
+                            handler: () => ({ statusCode: 200 })
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {
+                        notFound: () => ({
+                            statusCode: 500
+                        })
+                    }
+                }
+            );
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(500);
+            }
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
             ]);

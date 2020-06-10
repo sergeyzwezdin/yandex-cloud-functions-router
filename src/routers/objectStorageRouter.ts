@@ -3,6 +3,7 @@ import { ObjectStorageRoute, ObjectStorageRouteTypeValidate } from '../models/ro
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
 import { CloudFuntionResult } from '../models/cloudFunctionResult';
+import { NoMatchedRouteError } from '../models/routerError';
 import { log } from '../helpers/log';
 
 const validateType = (type: ObjectStorageRouteTypeValidate | undefined, message: CloudFunctionObjectStorageEventMessage) => {
@@ -52,7 +53,7 @@ const objectStorageRouter: (
     }
 
     log('WARN', context.requestId, 'There is no matched route', {});
-    throw new Error('There is no matched route.');
+    throw new NoMatchedRouteError('There is no matched route.');
 };
 
 export { objectStorageRouter };

@@ -1,3 +1,4 @@
+import { HttpParamNotSupportedTypeRouteError, NoMatchedRouteError } from '../models/routerError';
 import { HttpRoute, HttpRouteBodyPatternValidate, HttpRouteParamValidate } from '../models/routes';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
@@ -39,7 +40,7 @@ const validateParams = (params: HttpRouteParamValidate | undefined, event: Cloud
             } else if (type === 'regexp') {
                 return !(pattern?.test(eventParamValue) ?? false);
             } else {
-                throw new Error(`Not supported type: ${type}`);
+                throw new HttpParamNotSupportedTypeRouteError(`Not supported type: ${type}`);
             }
         });
 
@@ -105,7 +106,7 @@ const httpRouter: (
     }
 
     log('WARN', context.requestId, 'There is no matched route', {});
-    throw new Error('There is no matched route.');
+    throw new NoMatchedRouteError('There is no matched route.');
 };
 
 export { httpRouter };

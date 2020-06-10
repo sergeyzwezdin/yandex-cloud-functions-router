@@ -5,10 +5,11 @@
 * Supports **almost all supported triggers** such as [Timer trigger](https://cloud.yandex.com/docs/functions/concepts/trigger/timer), [Message Queue trigger](https://cloud.yandex.com/docs/functions/concepts/trigger/ymq-trigger), [Object Storage trigger](https://cloud.yandex.com/docs/functions/concepts/trigger/os-trigger), and others.
 * Handles **CORS** for HTTP requests.
 * **Can filter requests** by HTTP method, params, body, queue identifier, and other trigger-specific params.
+* **Customizable error mapping** to appropriate responses.
 * Zero external dependencies.
 * Supports **Typescript out of the box**. 🤘
 
-# How it works
+## How it works
 
 Once you create a Node application that uses this package, you can assign some routes to the handlers. Next, you publish the Yandex Cloud Functions application and it will handle every request with the corresponding handler.
 
@@ -53,11 +54,11 @@ Examples:
 * [Typescript project](https://github.com/sergeyzwezdin/yandex-cloud-functions-router/tree/master/examples/typescript)
 * [Javascript project](https://github.com/sergeyzwezdin/yandex-cloud-functions-router/tree/master/examples/javascript)
 
-# Requirements
+## Requirements
 
 * Node 12+
 
-# Usage
+## Usage
 
 1. Install the package using npm:
 ```bash
@@ -758,6 +759,68 @@ export.handler = router({
 
 </p>
 </details>
+
+## Error mapping
+
+In case of any exceptions during the request processing, it is possible to map these exceptions to specific output response. To do that specify `errorHandling` property in router options. There are standard exceptions as well as custom exception handling.
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    http: [/* ... */]
+  },
+  {
+    errorHandling: {
+      notFound: (error) => ({
+          statusCode: 404
+      })
+    }
+  });
+```
+
+The following types of standard errors are supported:
+
+* `notFound` — throws when there are no matching route for the current request.
+* `unknownEvent` — throws when the router is unable to determine the type of processed event.
+* `unknownMessage` — throws when the router started to process trigger event, but unable to determine the message type.
+* `triggerCombinedError` — if the function processes few messages at the time, and during the processing few exceptions are thrown, they will be combined into `TriggerRouteError` and could be handled with `triggerCombinedError`.
+
+In addition, it is possible to handle errors that came from the handler's logic. To do that add `custom` section which is an array of definitions for error handling.
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    http: [/* ... */]
+  },
+  {
+    errorHandling: {
+      custom: [
+        {
+          error: 'Something happened',
+          result: (error) => ({
+            statusCode: 500
+          })
+        },
+        {
+          error: /error/i,
+          result: (error) => ({
+            statusCode: 500
+          })
+        }
+      ]
+    }
+  });
+```
+
+Every definition contains two mandatory properties - `error` and `result`.
+
+* `error` could be either `string` and `RegExp` object that match the message of the exception.
+
+* `result` is a handler similar to normal (non-error) handler.
+
+You can skip to define `errorHandling` option. In this case default set of error handlers will work, that will return HTTP 404 for `notFound`, `unknownEvent`, and `unknownMessage` types.
 
 # License
 

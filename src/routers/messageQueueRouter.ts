@@ -3,6 +3,7 @@ import { CloudFunctionMessageQueueEventMessage, CloudFunctionTriggerEvent } from
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
 import { CloudFuntionResult } from '../models/cloudFunctionResult';
 import { MessageQueueRoute } from '../models/routes';
+import { NoMatchedRouteError } from '../models/routerError';
 import { log } from '../helpers/log';
 import { matchObjectPattern } from '../helpers/matchObjectPattern';
 
@@ -65,7 +66,7 @@ const messageQueueRouter: (
     }
 
     log('WARN', context.requestId, 'There is no matched route', {});
-    throw new Error('There is no matched route.');
+    throw new NoMatchedRouteError('There is no matched route.');
 };
 
 export { messageQueueRouter };

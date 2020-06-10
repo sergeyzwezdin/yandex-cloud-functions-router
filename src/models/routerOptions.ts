@@ -1,3 +1,6 @@
+import { NoMatchedRouteError, TriggerRouteError, UnknownEventTypeRouteError, UnknownMessageTypeRouteError } from './routerError';
+
+import { CloudFuntionResult } from './cloudFunctionResult';
 import { HttpMethod } from './httpMethod';
 
 type RouterCorsOptions = {
@@ -8,8 +11,20 @@ type RouterCorsOptions = {
     allowCredentials?: boolean;
 };
 
-type RouterOptions = {
-    cors?: RouterCorsOptions;
+type ErrorHandlingOptions = {
+    notFound?: (error: NoMatchedRouteError) => CloudFuntionResult;
+    unknownEvent?: (error: UnknownEventTypeRouteError) => CloudFuntionResult;
+    unknownMessage?: (error: UnknownMessageTypeRouteError) => CloudFuntionResult;
+    triggerCombinedError?: (error: TriggerRouteError) => CloudFuntionResult;
+    custom?: {
+        error: string | RegExp;
+        result: (error: Error) => CloudFuntionResult;
+    }[];
 };
 
-export { RouterOptions, RouterCorsOptions };
+type RouterOptions = {
+    cors?: RouterCorsOptions;
+    errorHandling?: ErrorHandlingOptions;
+};
+
+export { RouterOptions, RouterCorsOptions, ErrorHandlingOptions };

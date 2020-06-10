@@ -3,6 +3,7 @@ import { CloudFunctionIotMessageEventMessage, CloudFunctionTriggerEvent } from '
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
 import { CloudFuntionResult } from '../models/cloudFunctionResult';
 import { IoTMessageRoute } from '../models/routes';
+import { NoMatchedRouteError } from '../models/routerError';
 import { log } from '../helpers/log';
 
 const validateRegistryId = (registryId: string | undefined, message: CloudFunctionIotMessageEventMessage) => {
@@ -50,7 +51,7 @@ const iotMessageRouter: (
     }
 
     log('WARN', context.requestId, 'There is no matched route', {});
-    throw new Error('There is no matched route.');
+    throw new NoMatchedRouteError('There is no matched route.');
 };
 
 export { iotMessageRouter };

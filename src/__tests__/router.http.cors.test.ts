@@ -37,7 +37,8 @@ describe('router', () => {
                         cors: {
                             enable: true,
                             allowedOrigins: ['http://localhost:5000']
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -83,7 +84,8 @@ describe('router', () => {
                         cors: {
                             enable: true,
                             allowedOrigins: ['http://localhost:5000']
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -131,7 +133,8 @@ describe('router', () => {
                             enable: true,
                             allowedOrigins: ['http://localhost:5000'],
                             allowCredentials: false
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -177,7 +180,8 @@ describe('router', () => {
                     {
                         cors: {
                             enable: true
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -220,7 +224,8 @@ describe('router', () => {
                     {
                         cors: {
                             enable: true
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -267,7 +272,8 @@ describe('router', () => {
                         cors: {
                             enable: true,
                             allowedOrigins: ['http://localhost:3000']
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -312,7 +318,8 @@ describe('router', () => {
                     {
                         cors: {
                             enable: true
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -357,7 +364,8 @@ describe('router', () => {
                         cors: {
                             enable: true,
                             allowedOrigins: ['http://localhost:5000']
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -403,7 +411,8 @@ describe('router', () => {
                         cors: {
                             enable: true,
                             allowedOrigins: ['http://localhost:5000']
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -452,7 +461,8 @@ describe('router', () => {
                             enable: true,
                             allowedOrigins: ['http://localhost:5000'],
                             allowCredentials: false
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -500,7 +510,8 @@ describe('router', () => {
                         cors: {
                             enable: true,
                             allowedOrigins: ['http://localhost:3000']
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -548,7 +559,8 @@ describe('router', () => {
                             enable: true,
                             allowedOrigins: ['http://localhost:5000'],
                             allowedMethods: ['GET', 'PUT']
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -598,7 +610,8 @@ describe('router', () => {
                             enable: true,
                             allowedOrigins: ['http://localhost:5000'],
                             allowedMethods: ['GET', 'POST']
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -649,7 +662,8 @@ describe('router', () => {
                             allowedOrigins: ['http://localhost:5000'],
                             allowedMethods: ['GET', 'POST'],
                             allowedHeaders: ['X-Test']
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -702,7 +716,8 @@ describe('router', () => {
                             allowedOrigins: ['http://localhost:5000'],
                             allowedMethods: ['GET', 'POST'],
                             allowedHeaders: ['X-Test']
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -755,7 +770,8 @@ describe('router', () => {
                             allowedOrigins: ['http://localhost:5000'],
                             allowedMethods: ['GET', 'POST'],
                             allowedHeaders: ['X-Test']
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -804,7 +820,8 @@ describe('router', () => {
                             allowedOrigins: ['http://localhost:5000'],
                             allowedMethods: ['GET', 'POST'],
                             allowedHeaders: ['X-Test']
-                        }
+                        },
+                        errorHandling: {}
                     }
                 );
                 const event = httpMethodEvent({
@@ -860,14 +877,19 @@ describe('router', () => {
 
             it('skips default CORS headers for simple requests', async () => {
                 // Arrange
-                const route = router({
-                    http: [
-                        {
-                            httpMethod: ['GET'],
-                            handler: () => ({ statusCode: 200, body: 'ok' })
-                        }
-                    ]
-                });
+                const route = router(
+                    {
+                        http: [
+                            {
+                                httpMethod: ['GET'],
+                                handler: () => ({ statusCode: 200, body: 'ok' })
+                            }
+                        ]
+                    },
+                    {
+                        errorHandling: {}
+                    }
+                );
                 const event = httpMethodEvent({
                     httpMethod: 'GET',
                     headers: {
@@ -898,14 +920,19 @@ describe('router', () => {
 
             it('fails preflight CORS requests', async () => {
                 // Arrange
-                const route = router({
-                    http: [
-                        {
-                            httpMethod: ['GET'],
-                            handler: () => ({ statusCode: 200 })
-                        }
-                    ]
-                });
+                const route = router(
+                    {
+                        http: [
+                            {
+                                httpMethod: ['GET'],
+                                handler: () => ({ statusCode: 200 })
+                            }
+                        ]
+                    },
+                    {
+                        errorHandling: {}
+                    }
+                );
                 const event = httpMethodEvent({
                     httpMethod: 'OPTIONS',
                     headers: {

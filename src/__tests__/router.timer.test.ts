@@ -2,6 +2,7 @@ import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from '../mo
 import { eventContext, timerEvent } from '../__data__/router.data';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
+import { NoMatchedRouteError } from '../models/routerError';
 import { consoleSpy } from '../__helpers__/consoleSpy';
 import { router } from '../router';
 
@@ -30,13 +31,16 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                timer: [
-                    {
-                        handler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    timer: [
+                        {
+                            handler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = timerEvent({ triggerId: 'b4wt2lnqwvjwnregbqbb' });
             const context = eventContext();
 
@@ -64,21 +68,24 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                timer: [
-                    {
-                        triggerId: 'a4wt2lnqwvjwnregbqbb',
-                        handler: defaultHandler
-                    },
-                    {
-                        triggerId: 'b4wt2lnqwvjwnregbqbb',
-                        handler: timerHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    timer: [
+                        {
+                            triggerId: 'a4wt2lnqwvjwnregbqbb',
+                            handler: defaultHandler
+                        },
+                        {
+                            triggerId: 'b4wt2lnqwvjwnregbqbb',
+                            handler: timerHandler
+                        },
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = timerEvent({ triggerId: 'b4wt2lnqwvjwnregbqbb' });
             const context = eventContext();
 
@@ -97,7 +104,7 @@ describe('router', () => {
 
         it('throws an error when no routes defined', async () => {
             // Arrange
-            const route = router({});
+            const route = router({}, { errorHandling: {} });
             const event = timerEvent({ triggerId: 'b4wt2lnqwvjwnregbqbb' });
             const context = eventContext();
 
@@ -105,7 +112,36 @@ describe('router', () => {
             const result = route(event, context);
 
             // Assert
-            await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            await expect(result).rejects.toThrow(NoMatchedRouteError);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing timer trigger message Trigger Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+        });
+
+        it('throws an error when no routes defined (error handling)', async () => {
+            // Arrange
+            const route = router(
+                {},
+                {
+                    errorHandling: {
+                        notFound: () => ({
+                            statusCode: 500
+                        })
+                    }
+                }
+            );
+            const event = timerEvent({ triggerId: 'b4wt2lnqwvjwnregbqbb' });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(500);
+            }
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing timer trigger message Trigger Id: b4wt2lnqwvjwnregbqbb`]
             ]);
@@ -114,22 +150,25 @@ describe('router', () => {
 
         it('throws an error when no routes matched', async () => {
             // Arrange
-            const route = router({
-                timer: [
-                    {
-                        triggerId: 'a4wt2lnqwvjwnregbqbb',
-                        handler: () => ({
-                            statusCode: 200
-                        })
-                    },
-                    {
-                        triggerId: 'c4wt2lnqwvjwnregbqbb',
-                        handler: () => ({
-                            statusCode: 200
-                        })
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    timer: [
+                        {
+                            triggerId: 'a4wt2lnqwvjwnregbqbb',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        },
+                        {
+                            triggerId: 'c4wt2lnqwvjwnregbqbb',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = timerEvent({ triggerId: 'b4wt2lnqwvjwnregbqbb' });
             const context = eventContext();
 
@@ -137,7 +176,51 @@ describe('router', () => {
             const result = route(event, context);
 
             // Assert
-            await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            await expect(result).rejects.toThrow(NoMatchedRouteError);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing timer trigger message Trigger Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+        });
+
+        it('throws an error when no routes matched (error handling)', async () => {
+            // Arrange
+            const route = router(
+                {
+                    timer: [
+                        {
+                            triggerId: 'a4wt2lnqwvjwnregbqbb',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        },
+                        {
+                            triggerId: 'c4wt2lnqwvjwnregbqbb',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {
+                        notFound: () => ({
+                            statusCode: 500
+                        })
+                    }
+                }
+            );
+            const event = timerEvent({ triggerId: 'b4wt2lnqwvjwnregbqbb' });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(500);
+            }
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing timer trigger message Trigger Id: b4wt2lnqwvjwnregbqbb`]
             ]);
