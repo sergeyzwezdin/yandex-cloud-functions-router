@@ -2,6 +2,7 @@ import { CloudFunctionObjectStorageEventMessage, CloudFunctionTriggerEvent } fro
 import { eventContext, objectStorageEvent } from '../__data__/router.data';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
+import { NoMatchedRouteError } from '../models/routerError';
 import { consoleSpy } from '../__helpers__/consoleSpy';
 import { router } from '../router';
 
@@ -30,13 +31,16 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                object_storage: [
-                    {
-                        handler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    object_storage: [
+                        {
+                            handler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = objectStorageEvent({
                 eventType: 'yandex.cloud.events.storage.ObjectCreate',
                 bucketId: 's3',
@@ -72,21 +76,24 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                object_storage: [
-                    {
-                        type: 'update',
-                        handler: defaultHandler
-                    },
-                    {
-                        type: 'create',
-                        handler: typeHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    object_storage: [
+                        {
+                            type: 'update',
+                            handler: defaultHandler
+                        },
+                        {
+                            type: 'create',
+                            handler: typeHandler
+                        },
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = objectStorageEvent({
                 eventType: 'yandex.cloud.events.storage.ObjectCreate',
                 bucketId: 's3',
@@ -119,21 +126,24 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                object_storage: [
-                    {
-                        type: 'create',
-                        handler: defaultHandler
-                    },
-                    {
-                        type: 'update',
-                        handler: typeHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    object_storage: [
+                        {
+                            type: 'create',
+                            handler: defaultHandler
+                        },
+                        {
+                            type: 'update',
+                            handler: typeHandler
+                        },
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = objectStorageEvent({
                 eventType: 'yandex.cloud.events.storage.ObjectUpdate',
                 bucketId: 's3',
@@ -166,21 +176,24 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                object_storage: [
-                    {
-                        type: 'create',
-                        handler: defaultHandler
-                    },
-                    {
-                        type: 'delete',
-                        handler: typeHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    object_storage: [
+                        {
+                            type: 'create',
+                            handler: defaultHandler
+                        },
+                        {
+                            type: 'delete',
+                            handler: typeHandler
+                        },
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = objectStorageEvent({
                 eventType: 'yandex.cloud.events.storage.ObjectDelete',
                 bucketId: 's3',
@@ -213,21 +226,24 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                object_storage: [
-                    {
-                        bucketId: '123',
-                        handler: defaultHandler
-                    },
-                    {
-                        bucketId: 's3',
-                        handler: bucketHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    object_storage: [
+                        {
+                            bucketId: '123',
+                            handler: defaultHandler
+                        },
+                        {
+                            bucketId: 's3',
+                            handler: bucketHandler
+                        },
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = objectStorageEvent({
                 eventType: 'yandex.cloud.events.storage.ObjectDelete',
                 bucketId: 's3',
@@ -260,21 +276,24 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                object_storage: [
-                    {
-                        objectId: '2.jpg',
-                        handler: defaultHandler
-                    },
-                    {
-                        objectId: '1.jpg',
-                        handler: objectHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    object_storage: [
+                        {
+                            objectId: '2.jpg',
+                            handler: defaultHandler
+                        },
+                        {
+                            objectId: '1.jpg',
+                            handler: objectHandler
+                        },
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = objectStorageEvent({
                 eventType: 'yandex.cloud.events.storage.ObjectDelete',
                 bucketId: 's3',
@@ -297,7 +316,7 @@ describe('router', () => {
 
         it('throws an error when no routes defined', async () => {
             // Arrange
-            const route = router({});
+            const route = router({}, { errorHandling: {} });
             const event = objectStorageEvent({
                 eventType: 'yandex.cloud.events.storage.ObjectCreate',
                 bucketId: 's3',
@@ -309,7 +328,40 @@ describe('router', () => {
             const result = route(event, context);
 
             // Assert
-            await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            await expect(result).rejects.toThrow(NoMatchedRouteError);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing object storage message Bucket Id: s3 Object Id: 1.jpg`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+        });
+
+        it('throws an error when no routes defined (error handling)', async () => {
+            // Arrange
+            const route = router(
+                {},
+                {
+                    errorHandling: {
+                        notFound: () => ({
+                            statusCode: 500
+                        })
+                    }
+                }
+            );
+            const event = objectStorageEvent({
+                eventType: 'yandex.cloud.events.storage.ObjectCreate',
+                bucketId: 's3',
+                objectId: '1.jpg'
+            });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(500);
+            }
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing object storage message Bucket Id: s3 Object Id: 1.jpg`]
             ]);
@@ -318,28 +370,31 @@ describe('router', () => {
 
         it('throws an error when no routes matched', async () => {
             // Arrange
-            const route = router({
-                object_storage: [
-                    {
-                        objectId: '2.jpg',
-                        handler: () => ({
-                            statusCode: 200
-                        })
-                    },
-                    {
-                        bucketId: '1234',
-                        handler: () => ({
-                            statusCode: 200
-                        })
-                    },
-                    {
-                        type: 'update',
-                        handler: () => ({
-                            statusCode: 200
-                        })
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    object_storage: [
+                        {
+                            objectId: '2.jpg',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        },
+                        {
+                            bucketId: '1234',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        },
+                        {
+                            type: 'update',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = objectStorageEvent({
                 eventType: 'yandex.cloud.events.storage.ObjectCreate',
                 bucketId: 's3',
@@ -351,7 +406,61 @@ describe('router', () => {
             const result = route(event, context);
 
             // Assert
-            await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            await expect(result).rejects.toThrow(NoMatchedRouteError);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing object storage message Bucket Id: s3 Object Id: 1.jpg`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+        });
+
+        it('throws an error when no routes matched (error handling)', async () => {
+            // Arrange
+            const route = router(
+                {
+                    object_storage: [
+                        {
+                            objectId: '2.jpg',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        },
+                        {
+                            bucketId: '1234',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        },
+                        {
+                            type: 'update',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {
+                        notFound: () => ({
+                            statusCode: 500
+                        })
+                    }
+                }
+            );
+            const event = objectStorageEvent({
+                eventType: 'yandex.cloud.events.storage.ObjectCreate',
+                bucketId: 's3',
+                objectId: '1.jpg'
+            });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(500);
+            }
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing object storage message Bucket Id: s3 Object Id: 1.jpg`]
             ]);

@@ -2,6 +2,7 @@ import { CloudFunctionIotMessageEventMessage, CloudFunctionTriggerEvent } from '
 import { eventContext, iotMessageEvent } from '../__data__/router.data';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
+import { NoMatchedRouteError } from '../models/routerError';
 import { consoleSpy } from '../__helpers__/consoleSpy';
 import { router } from '../router';
 
@@ -30,13 +31,16 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                iot_message: [
-                    {
-                        handler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    iot_message: [
+                        {
+                            handler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = iotMessageEvent({
                 registryId: 'arenou2oj4ct42eq8g3n',
                 deviceId: 'areqjd6un3afc3cefcvm',
@@ -71,22 +75,25 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                iot_message: [
-                    {
-                        registryId: 'brenou2oj4ct42eq8g3n',
-                        handler: defaultHandler
-                    },
-                    {
-                        registryId: 'arenou2oj4ct42eq8g3n',
-                        handler: registryHandler
-                    },
+            const route = router(
+                {
+                    iot_message: [
+                        {
+                            registryId: 'brenou2oj4ct42eq8g3n',
+                            handler: defaultHandler
+                        },
+                        {
+                            registryId: 'arenou2oj4ct42eq8g3n',
+                            handler: registryHandler
+                        },
 
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = iotMessageEvent({
                 registryId: 'arenou2oj4ct42eq8g3n',
                 deviceId: 'areqjd6un3afc3cefcvm',
@@ -122,22 +129,25 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                iot_message: [
-                    {
-                        deviceId: 'breqjd6un3afc3cefcvm',
-                        handler: defaultHandler
-                    },
-                    {
-                        deviceId: 'areqjd6un3afc3cefcvm',
-                        handler: deviceHandler
-                    },
+            const route = router(
+                {
+                    iot_message: [
+                        {
+                            deviceId: 'breqjd6un3afc3cefcvm',
+                            handler: defaultHandler
+                        },
+                        {
+                            deviceId: 'areqjd6un3afc3cefcvm',
+                            handler: deviceHandler
+                        },
 
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = iotMessageEvent({
                 registryId: 'arenou2oj4ct42eq8g3n',
                 deviceId: 'areqjd6un3afc3cefcvm',
@@ -173,22 +183,25 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                iot_message: [
-                    {
-                        mqttTopic: '$devices/breqjd6un3afc3cefcvm/events',
-                        handler: defaultHandler
-                    },
-                    {
-                        mqttTopic: '$devices/areqjd6un3afc3cefcvm/events',
-                        handler: mqttHandler
-                    },
+            const route = router(
+                {
+                    iot_message: [
+                        {
+                            mqttTopic: '$devices/breqjd6un3afc3cefcvm/events',
+                            handler: defaultHandler
+                        },
+                        {
+                            mqttTopic: '$devices/areqjd6un3afc3cefcvm/events',
+                            handler: mqttHandler
+                        },
 
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
 
             const event = iotMessageEvent({
                 registryId: 'arenou2oj4ct42eq8g3n',
@@ -215,7 +228,7 @@ describe('router', () => {
 
         it('throws an error when no routes defined', async () => {
             // Arrange
-            const route = router({});
+            const route = router({}, { errorHandling: {} });
             const event = iotMessageEvent({
                 registryId: 'arenou2oj4ct42eq8g3n',
                 deviceId: 'areqjd6un3afc3cefcvm',
@@ -228,7 +241,43 @@ describe('router', () => {
             const result = route(event, context);
 
             // Assert
-            await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            await expect(result).rejects.toThrow(NoMatchedRouteError);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} Processing IoT Core message Registry Id: arenou2oj4ct42eq8g3n Device Id: areqjd6un3afc3cefcvm MQTT Topic: $devices/areqjd6un3afc3cefcvm/events`
+                ]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+        });
+
+        it('throws an error when no routes defined (error handling)', async () => {
+            // Arrange
+            const route = router(
+                {},
+                {
+                    errorHandling: {
+                        notFound: () => ({
+                            statusCode: 500
+                        })
+                    }
+                }
+            );
+            const event = iotMessageEvent({
+                registryId: 'arenou2oj4ct42eq8g3n',
+                deviceId: 'areqjd6un3afc3cefcvm',
+                mqttTopic: '$devices/areqjd6un3afc3cefcvm/events',
+                payload: 'VGVzdCA0'
+            });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(500);
+            }
             expect(consoleMock.info.mock.calls).toEqual([
                 [
                     `[ROUTER] INFO RequestID: ${context.requestId} Processing IoT Core message Registry Id: arenou2oj4ct42eq8g3n Device Id: areqjd6un3afc3cefcvm MQTT Topic: $devices/areqjd6un3afc3cefcvm/events`
@@ -239,28 +288,31 @@ describe('router', () => {
 
         it('throws an error when no routes matched', async () => {
             // Arrange
-            const route = router({
-                iot_message: [
-                    {
-                        registryId: 'brenou2oj4ct42eq8g3n',
-                        handler: () => ({
-                            statusCode: 200
-                        })
-                    },
-                    {
-                        deviceId: 'breqjd6un3afc3cefcvm',
-                        handler: () => ({
-                            statusCode: 200
-                        })
-                    },
-                    {
-                        mqttTopic: '$devices/breqjd6un3afc3cefcvm/events',
-                        handler: () => ({
-                            statusCode: 200
-                        })
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    iot_message: [
+                        {
+                            registryId: 'brenou2oj4ct42eq8g3n',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        },
+                        {
+                            deviceId: 'breqjd6un3afc3cefcvm',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        },
+                        {
+                            mqttTopic: '$devices/breqjd6un3afc3cefcvm/events',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = iotMessageEvent({
                 registryId: 'arenou2oj4ct42eq8g3n',
                 deviceId: 'areqjd6un3afc3cefcvm',
@@ -273,7 +325,64 @@ describe('router', () => {
             const result = route(event, context);
 
             // Assert
-            await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            await expect(result).rejects.toThrow(NoMatchedRouteError);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [
+                    `[ROUTER] INFO RequestID: ${context.requestId} Processing IoT Core message Registry Id: arenou2oj4ct42eq8g3n Device Id: areqjd6un3afc3cefcvm MQTT Topic: $devices/areqjd6un3afc3cefcvm/events`
+                ]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+        });
+
+        it('throws an error when no routes matched (error handling)', async () => {
+            // Arrange
+            const route = router(
+                {
+                    iot_message: [
+                        {
+                            registryId: 'brenou2oj4ct42eq8g3n',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        },
+                        {
+                            deviceId: 'breqjd6un3afc3cefcvm',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        },
+                        {
+                            mqttTopic: '$devices/breqjd6un3afc3cefcvm/events',
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {
+                        notFound: () => ({
+                            statusCode: 500
+                        })
+                    }
+                }
+            );
+            const event = iotMessageEvent({
+                registryId: 'arenou2oj4ct42eq8g3n',
+                deviceId: 'areqjd6un3afc3cefcvm',
+                mqttTopic: '$devices/areqjd6un3afc3cefcvm/events',
+                payload: 'VGVzdCA0'
+            });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(500);
+            }
             expect(consoleMock.info.mock.calls).toEqual([
                 [
                     `[ROUTER] INFO RequestID: ${context.requestId} Processing IoT Core message Registry Id: arenou2oj4ct42eq8g3n Device Id: areqjd6un3afc3cefcvm MQTT Topic: $devices/areqjd6un3afc3cefcvm/events`

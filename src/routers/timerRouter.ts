@@ -2,6 +2,7 @@ import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from '../mo
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
 import { CloudFuntionResult } from '../models/cloudFunctionResult';
+import { NoMatchedRouteError } from '../models/routerError';
 import { TimerRoute } from '../models/routes';
 import { log } from '../helpers/log';
 
@@ -33,7 +34,7 @@ const timerRouter: (
     }
 
     log('WARN', context.requestId, 'There is no matched route', {});
-    throw new Error('There is no matched route.');
+    throw new NoMatchedRouteError('There is no matched route.');
 };
 
 export { timerRouter };

@@ -4,6 +4,7 @@ import { CloudFunctionMessageQueueEventMessage, CloudFunctionTriggerEvent } from
 import { eventContext, messageQueueEvent } from '../__data__/router.data';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
+import { NoMatchedRouteError } from '../models/routerError';
 import { consoleSpy } from '../__helpers__/consoleSpy';
 import { matchObjectPattern } from '../helpers/matchObjectPattern';
 import { mocked } from 'ts-jest/utils';
@@ -34,13 +35,16 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                message_queue: [
-                    {
-                        handler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    message_queue: [
+                        {
+                            handler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = messageQueueEvent();
             const context = eventContext();
 
@@ -72,21 +76,24 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                message_queue: [
-                    {
-                        queueId: 'a4wt2lnqwvjwnregbqbb',
-                        handler: defaultHandler
-                    },
-                    {
-                        queueId: 'b4wt2lnqwvjwnregbqbb',
-                        handler: queueHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    message_queue: [
+                        {
+                            queueId: 'a4wt2lnqwvjwnregbqbb',
+                            handler: defaultHandler
+                        },
+                        {
+                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            handler: queueHandler
+                        },
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = messageQueueEvent();
             const context = eventContext();
 
@@ -115,31 +122,34 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                message_queue: [
-                    {
-                        queueId: 'b4wt2lnqwvjwnregbqbb',
-                        body: {
-                            json: {
-                                type: 'update'
-                            }
+            const route = router(
+                {
+                    message_queue: [
+                        {
+                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            body: {
+                                json: {
+                                    type: 'update'
+                                }
+                            },
+                            handler: defaultHandler
                         },
-                        handler: defaultHandler
-                    },
-                    {
-                        queueId: 'b4wt2lnqwvjwnregbqbb',
-                        body: {
-                            json: {
-                                type: 'add'
-                            }
+                        {
+                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            body: {
+                                json: {
+                                    type: 'add'
+                                }
+                            },
+                            handler: queueHandler
                         },
-                        handler: queueHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = messageQueueEvent();
             const context = eventContext();
 
@@ -163,18 +173,21 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                message_queue: [
-                    {
-                        handler,
-                        body: {
-                            json: {
-                                type: 'update'
+            const route = router(
+                {
+                    message_queue: [
+                        {
+                            handler,
+                            body: {
+                                json: {
+                                    type: 'update'
+                                }
                             }
                         }
-                    }
-                ]
-            });
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = messageQueueEvent({
                 body: `{ type: 'add'`
             });
@@ -203,27 +216,30 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                message_queue: [
-                    {
-                        queueId: 'b4wt2lnqwvjwnregbqbb',
-                        body: {
-                            pattern: /update/i
+            const route = router(
+                {
+                    message_queue: [
+                        {
+                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            body: {
+                                pattern: /update/i
+                            },
+                            handler: defaultHandler
                         },
-                        handler: defaultHandler
-                    },
-                    {
-                        queueId: 'b4wt2lnqwvjwnregbqbb',
-                        body: {
-                            pattern: /add/i
+                        {
+                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            body: {
+                                pattern: /add/i
+                            },
+                            handler: queueHandler
                         },
-                        handler: queueHandler
-                    },
-                    {
-                        handler: defaultHandler
-                    }
-                ]
-            });
+                        {
+                            handler: defaultHandler
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = messageQueueEvent();
             const context = eventContext();
 
@@ -247,16 +263,19 @@ describe('router', () => {
                     statusCode: 200
                 })
             );
-            const route = router({
-                message_queue: [
-                    {
-                        handler,
-                        body: {
-                            pattern: /add/i
+            const route = router(
+                {
+                    message_queue: [
+                        {
+                            handler,
+                            body: {
+                                pattern: /add/i
+                            }
                         }
-                    }
-                ]
-            });
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = messageQueueEvent({ body: '' });
             const context = eventContext();
 
@@ -278,18 +297,21 @@ describe('router', () => {
             });
 
             // Arrange
-            const route = router({
-                message_queue: [
-                    {
-                        body: {
-                            json: {}
-                        },
-                        handler: () => ({
-                            statusCode: 200
-                        })
-                    }
-                ]
-            });
+            const route = router(
+                {
+                    message_queue: [
+                        {
+                            body: {
+                                json: {}
+                            },
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = messageQueueEvent({ body: JSON.stringify({ type: 'add' }) });
             const context = eventContext();
 
@@ -306,9 +328,61 @@ describe('router', () => {
             mocked(matchObjectPattern).mockReset();
         });
 
+        it('throws an error on unexpected error while validate body (error handling)', async () => {
+            // Setup
+            mocked(matchObjectPattern).mockImplementationOnce((a: object, b: object) => {
+                throw new Error('Unexpected error.');
+            });
+
+            // Arrange
+            const route = router(
+                {
+                    message_queue: [
+                        {
+                            body: {
+                                json: {}
+                            },
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {
+                        custom: [
+                            {
+                                error: 'Unexpected error.',
+                                result: () => ({
+                                    statusCode: 501
+                                })
+                            }
+                        ]
+                    }
+                }
+            );
+            const event = messageQueueEvent({ body: JSON.stringify({ type: 'add' }) });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(501);
+            }
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
+
+            // Teardown
+            mocked(matchObjectPattern).mockReset();
+        });
+
         it('throws an error when no routes defined', async () => {
             // Arrange
-            const route = router({});
+            const route = router({}, { errorHandling: {} });
             const event = messageQueueEvent();
             const context = eventContext();
 
@@ -316,7 +390,36 @@ describe('router', () => {
             const result = route(event, context);
 
             // Assert
-            await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            await expect(result).rejects.toThrow(NoMatchedRouteError);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+        });
+
+        it('throws an error when no routes defined (error handling)', async () => {
+            // Arrange
+            const route = router(
+                {},
+                {
+                    errorHandling: {
+                        notFound: () => ({
+                            statusCode: 500
+                        })
+                    }
+                }
+            );
+            const event = messageQueueEvent();
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(500);
+            }
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
             ]);
@@ -325,41 +428,44 @@ describe('router', () => {
 
         it('throws an error when no routes matched', async () => {
             // Arrange
-            const route = router({
-                message_queue: [
-                    {
-                        queueId: 'b4wt2lnqwvjwnregbqbb',
-                        body: {
-                            pattern: /update/i
+            const route = router(
+                {
+                    message_queue: [
+                        {
+                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            body: {
+                                pattern: /update/i
+                            },
+                            handler: () => ({
+                                statusCode: 200
+                            })
                         },
-                        handler: () => ({
-                            statusCode: 200
-                        })
-                    },
-                    {
-                        queueId: 'b4wt2lnqwvjwnregbqbb',
-                        body: {
-                            json: {
-                                type: 'update'
-                            }
+                        {
+                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            body: {
+                                json: {
+                                    type: 'update'
+                                }
+                            },
+                            handler: () => ({
+                                statusCode: 200
+                            })
                         },
-                        handler: () => ({
-                            statusCode: 200
-                        })
-                    },
-                    {
-                        queueId: 'a4wt2lnqwvjwnregbqbb',
-                        body: {
-                            json: {
-                                type: 'add'
-                            }
-                        },
-                        handler: () => ({
-                            statusCode: 200
-                        })
-                    }
-                ]
-            });
+                        {
+                            queueId: 'a4wt2lnqwvjwnregbqbb',
+                            body: {
+                                json: {
+                                    type: 'add'
+                                }
+                            },
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        }
+                    ]
+                },
+                { errorHandling: {} }
+            );
             const event = messageQueueEvent();
             const context = eventContext();
 
@@ -367,7 +473,70 @@ describe('router', () => {
             const result = route(event, context);
 
             // Assert
-            await expect(result).rejects.toThrow(new Error('There is no matched route.'));
+            await expect(result).rejects.toThrow(NoMatchedRouteError);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
+            ]);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} There is no matched route`]]);
+        });
+
+        it('throws an error when no routes matched (error handled)', async () => {
+            // Arrange
+            const route = router(
+                {
+                    message_queue: [
+                        {
+                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            body: {
+                                pattern: /update/i
+                            },
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        },
+                        {
+                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            body: {
+                                json: {
+                                    type: 'update'
+                                }
+                            },
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        },
+                        {
+                            queueId: 'a4wt2lnqwvjwnregbqbb',
+                            body: {
+                                json: {
+                                    type: 'add'
+                                }
+                            },
+                            handler: () => ({
+                                statusCode: 200
+                            })
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {
+                        notFound: () => ({
+                            statusCode: 500
+                        })
+                    }
+                }
+            );
+            const event = messageQueueEvent();
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(500);
+            }
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
             ]);

@@ -1,3 +1,6 @@
+/* istanbul ignore file */
+/* ignore file coverage */
+
 import { router } from 'yandex-cloud-functions-router';
 
 export const handler = router({
