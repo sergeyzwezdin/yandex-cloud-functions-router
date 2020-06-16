@@ -661,7 +661,7 @@ describe('router', () => {
                             enable: true,
                             allowedOrigins: ['http://localhost:5000'],
                             allowedMethods: ['GET', 'POST'],
-                            allowedHeaders: ['X-Test']
+                            allowedHeaders: ['X-Test', 'x-test2']
                         },
                         errorHandling: {}
                     }
@@ -689,7 +689,7 @@ describe('router', () => {
                     expect(result.statusCode).toBe(204);
                     expect(result.headers).toHaveProperty('Access-Control-Allow-Origin', 'http://localhost:5000');
                     expect(result.headers).toHaveProperty('Access-Control-Allow-Methods', 'GET, POST');
-                    expect(result.headers).toHaveProperty('Access-Control-Allow-Headers', 'X-Test');
+                    expect(result.headers).toHaveProperty('Access-Control-Allow-Headers', 'X-Test, x-test2');
                 }
                 expect(consoleMock.info.mock.calls).toEqual([
                     [

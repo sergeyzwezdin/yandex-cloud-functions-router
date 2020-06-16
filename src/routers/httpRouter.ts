@@ -55,7 +55,7 @@ const validateBodyPattern = (pattern: HttpRouteBodyPatternValidate | undefined, 
         if (pattern.json) {
             try {
                 const contentTypeMatched =
-                    String(event.headers['Content-Type'] || '')
+                    String((Object.entries(event.headers).find(([name]) => name.trim().toLowerCase() === 'content-type') ?? [])[1] || '')
                         .toLowerCase()
                         .indexOf('application/json') !== -1;
 

@@ -478,7 +478,7 @@ describe('router', () => {
             const event = httpMethodEvent({
                 httpMethod: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'content-type': 'application/json'
                 },
                 body: JSON.stringify({
                     type: 'update',
@@ -501,7 +501,7 @@ describe('router', () => {
             expect(bodyHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
                 [
-                    `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 32 Query: {} Headers: {"User-Agent":"jest","Content-Type":"application/json"}`
+                    `[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 32 Query: {} Headers: {"User-Agent":"jest","content-type":"application/json"}`
                 ]
             ]);
         });
