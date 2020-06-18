@@ -4,7 +4,7 @@ import { CloudFunctionContext } from '../cloudFunctionContext';
 import { CloudFuntionResult } from '../cloudFunctionResult';
 
 type MessageQueueRoute = {
-    queueId?: string;
+    queueId?: string[];
     body?: MessageQueueRouteBodyValidate;
     validators?: CustomMessageQueueValidator[];
     handler: (

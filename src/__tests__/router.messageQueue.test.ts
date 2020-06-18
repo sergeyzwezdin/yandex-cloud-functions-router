@@ -80,11 +80,11 @@ describe('router', () => {
                 {
                     message_queue: [
                         {
-                            queueId: 'a4wt2lnqwvjwnregbqbb',
+                            queueId: ['a4wt2lnqwvjwnregbqbb'],
                             handler: defaultHandler
                         },
                         {
-                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            queueId: ['b4wt2lnqwvjwnregbqbb'],
                             handler: queueHandler
                         },
                         {
@@ -126,7 +126,7 @@ describe('router', () => {
                 {
                     message_queue: [
                         {
-                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            queueId: ['b4wt2lnqwvjwnregbqbb'],
                             body: {
                                 json: {
                                     type: 'update'
@@ -135,7 +135,7 @@ describe('router', () => {
                             handler: defaultHandler
                         },
                         {
-                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            queueId: ['b4wt2lnqwvjwnregbqbb'],
                             body: {
                                 json: {
                                     type: 'add'
@@ -216,7 +216,7 @@ describe('router', () => {
                     message_queue: [
                         {
                             handler,
-                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            queueId: ['b4wt2lnqwvjwnregbqbb'],
                             validators: [
                                 (
                                     event: CloudFunctionTriggerEvent,
@@ -257,7 +257,7 @@ describe('router', () => {
                 message_queue: [
                     {
                         handler,
-                        queueId: 'b4wt2lnqwvjwnregbqbb',
+                        queueId: ['b4wt2lnqwvjwnregbqbb'],
                         validators: [
                             (
                                 event: CloudFunctionTriggerEvent,
@@ -300,7 +300,7 @@ describe('router', () => {
                     message_queue: [
                         {
                             handler,
-                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            queueId: ['b4wt2lnqwvjwnregbqbb'],
                             validators: [
                                 (
                                     event: CloudFunctionTriggerEvent,
@@ -345,14 +345,14 @@ describe('router', () => {
                 {
                     message_queue: [
                         {
-                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            queueId: ['b4wt2lnqwvjwnregbqbb'],
                             body: {
                                 pattern: /update/i
                             },
                             handler: defaultHandler
                         },
                         {
-                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            queueId: ['b4wt2lnqwvjwnregbqbb'],
                             body: {
                                 pattern: /add/i
                             },
@@ -557,7 +557,7 @@ describe('router', () => {
                 {
                     message_queue: [
                         {
-                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            queueId: ['b4wt2lnqwvjwnregbqbb'],
                             body: {
                                 pattern: /update/i
                             },
@@ -566,7 +566,7 @@ describe('router', () => {
                             })
                         },
                         {
-                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            queueId: ['b4wt2lnqwvjwnregbqbb'],
                             body: {
                                 json: {
                                     type: 'update'
@@ -577,7 +577,7 @@ describe('router', () => {
                             })
                         },
                         {
-                            queueId: 'a4wt2lnqwvjwnregbqbb',
+                            queueId: ['a4wt2lnqwvjwnregbqbb'],
                             body: {
                                 json: {
                                     type: 'add'
@@ -611,7 +611,7 @@ describe('router', () => {
                 {
                     message_queue: [
                         {
-                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            queueId: ['b4wt2lnqwvjwnregbqbb'],
                             body: {
                                 pattern: /update/i
                             },
@@ -620,7 +620,7 @@ describe('router', () => {
                             })
                         },
                         {
-                            queueId: 'b4wt2lnqwvjwnregbqbb',
+                            queueId: ['b4wt2lnqwvjwnregbqbb'],
                             body: {
                                 json: {
                                     type: 'update'
@@ -631,7 +631,7 @@ describe('router', () => {
                             })
                         },
                         {
-                            queueId: 'a4wt2lnqwvjwnregbqbb',
+                            queueId: ['a4wt2lnqwvjwnregbqbb'],
                             body: {
                                 json: {
                                     type: 'add'

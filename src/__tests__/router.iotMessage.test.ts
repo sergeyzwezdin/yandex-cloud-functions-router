@@ -54,7 +54,9 @@ describe('router', () => {
 
             // Assert
             expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
             expect(handler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
                 [
@@ -79,11 +81,11 @@ describe('router', () => {
                 {
                     iot_message: [
                         {
-                            registryId: 'brenou2oj4ct42eq8g3n',
+                            registryId: ['brenou2oj4ct42eq8g3n'],
                             handler: defaultHandler
                         },
                         {
-                            registryId: 'arenou2oj4ct42eq8g3n',
+                            registryId: ['arenou2oj4ct42eq8g3n'],
                             handler: registryHandler
                         },
 
@@ -133,11 +135,11 @@ describe('router', () => {
                 {
                     iot_message: [
                         {
-                            deviceId: 'breqjd6un3afc3cefcvm',
+                            deviceId: ['breqjd6un3afc3cefcvm'],
                             handler: defaultHandler
                         },
                         {
-                            deviceId: 'areqjd6un3afc3cefcvm',
+                            deviceId: ['areqjd6un3afc3cefcvm'],
                             handler: deviceHandler
                         },
 
@@ -187,11 +189,11 @@ describe('router', () => {
                 {
                     iot_message: [
                         {
-                            mqttTopic: '$devices/breqjd6un3afc3cefcvm/events',
+                            mqttTopic: ['$devices/breqjd6un3afc3cefcvm/events'],
                             handler: defaultHandler
                         },
                         {
-                            mqttTopic: '$devices/areqjd6un3afc3cefcvm/events',
+                            mqttTopic: ['$devices/areqjd6un3afc3cefcvm/events'],
                             handler: mqttHandler
                         },
 
@@ -292,19 +294,19 @@ describe('router', () => {
                 {
                     iot_message: [
                         {
-                            registryId: 'brenou2oj4ct42eq8g3n',
+                            registryId: ['brenou2oj4ct42eq8g3n'],
                             handler: () => ({
                                 statusCode: 200
                             })
                         },
                         {
-                            deviceId: 'breqjd6un3afc3cefcvm',
+                            deviceId: ['breqjd6un3afc3cefcvm'],
                             handler: () => ({
                                 statusCode: 200
                             })
                         },
                         {
-                            mqttTopic: '$devices/breqjd6un3afc3cefcvm/events',
+                            mqttTopic: ['$devices/breqjd6un3afc3cefcvm/events'],
                             handler: () => ({
                                 statusCode: 200
                             })
@@ -340,19 +342,19 @@ describe('router', () => {
                 {
                     iot_message: [
                         {
-                            registryId: 'brenou2oj4ct42eq8g3n',
+                            registryId: ['brenou2oj4ct42eq8g3n'],
                             handler: () => ({
                                 statusCode: 200
                             })
                         },
                         {
-                            deviceId: 'breqjd6un3afc3cefcvm',
+                            deviceId: ['breqjd6un3afc3cefcvm'],
                             handler: () => ({
                                 statusCode: 200
                             })
                         },
                         {
-                            mqttTopic: '$devices/breqjd6un3afc3cefcvm/events',
+                            mqttTopic: ['$devices/breqjd6un3afc3cefcvm/events'],
                             handler: () => ({
                                 statusCode: 200
                             })

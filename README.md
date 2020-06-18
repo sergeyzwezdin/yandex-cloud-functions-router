@@ -395,7 +395,7 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     timer: [
       {
-        triggerId: 'a4wt2lnqwvjwnregbqbb',       /* Filter by trigger identifier (optional). */
+        triggerId: ['a4wt2lnqwvjwnregbqbb'],     /* Filter by trigger identifier (optional). */
         handler: (event, context, message) => {  /* Handler function (required). */
           // Handle Timer trigger event
         }
@@ -422,14 +422,14 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     timer: [
       {
-        triggerId: 'a4wt2lnqwvjwnregbqbb',
+        triggerId: ['a4wt2lnqwvjwnregbqbb'],
         handler: (event, context, message) => {
           // Handle Timer trigger event
           // for a4wt2lnqwvjwnregbqbb timer
         }
       },
       {
-        triggerId: 'b4wt2lnqwvjwnregbqbb',
+        triggerId: ['b4wt2lnqwvjwnregbqbb'],
         handler: (event, context, message) => {
           // Handle Timer trigger event
           // for b4wt2lnqwvjwnregbqbb timer
@@ -453,7 +453,7 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     message_queue: [
       {
-        queueId: 'a4wt2lnqwvjwnregbqbb',         /* Filter by queue identifier (optional). */
+        queueId: ['a4wt2lnqwvjwnregbqbb'],       /* Filter by queue identifier (optional). */
         body: { },                               /* Filter by body content (optional). */
         validators: { },                         /* Additional validator(s) for the event. */
         handler: (event, context, message) => {  /* Handler function (required). */
@@ -482,14 +482,14 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     message_queue: [
       {
-        queueId: 'a4wt2lnqwvjwnregbqbb',
+        queueId: ['a4wt2lnqwvjwnregbqbb'],
         handler: (event, context, message) => {
           // Handle Message Queue trigger event
           // for a4wt2lnqwvjwnregbqbb queue
         }
       },
       {
-        queueId: 'b4wt2lnqwvjwnregbqbb',
+        queueId: ['b4wt2lnqwvjwnregbqbb'],
         handler: (event, context, message) => {
           // Handle Message Queue trigger event
           // for b4wt2lnqwvjwnregbqbb queue
@@ -630,9 +630,9 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     object_storage: [
       {
-        type: 'create',                          /* Filter by operation type (optional). */
-        bucketId: 's3',                          /* Filter by bucket identifier (optional). */
-        objectId: '1.jpg',                       /* Filter by object identifier (optional). */
+        type: ['create'],                        /* Filter by operation type (optional). */
+        bucketId: ['s3'],                        /* Filter by bucket identifier (optional). */
+        objectId: ['1.jpg'],                     /* Filter by object identifier (optional). */
         handler: (event, context, message) => {  /* Handler function (required). */
           // Handle Object Storage trigger event
         }
@@ -658,19 +658,19 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     object_storage: [
       {
-        type: 'create',
+        type: ['create'],
         handler: (event, context, message) => {
           // Handle creating new object in Object Storage
         }
       },
       {
-        type: 'update',
+        type: ['update'],
         handler: (event, context, message) => {
           // Handle updating new object in Object Storage
         }
       },
       {
-        type: 'delete',
+        type: ['delete'],
         handler: (event, context, message) => {
           // Handle deleting new object in Object Storage
         }
@@ -695,7 +695,7 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     object_storage: [
       {
-        bucketId: 's3',
+        bucketId: ['s3'],
         handler: (event, context, message) => {
           // Handle event in "s3" bucket
         }
@@ -720,7 +720,7 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     object_storage: [
       {
-        objectId: '1.jpg',
+        objectId: ['1.jpg'],
         handler: (event, context, message) => {
           // Handle event in "1.jpg" object
         }
@@ -743,9 +743,9 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     iot_message: [
       {
-        registryId: 'arenou2oj4ct42eq8g3n',                 /* Filter by Registry ID (optional). */
-        deviceId: 'areqjd6un3afc3cefcvm',                   /* Filter by Device ID (optional). */
-        mqttTopic: '$devices/areqjd6un3afc3cefcvm/events',  /* Filter by MQTT Topic (optional). */
+        registryId: ['arenou2oj4ct42eq8g3n'],               /* Filter by Registry ID (optional). */
+        deviceId: ['areqjd6un3afc3cefcvm'],                 /* Filter by Device ID (optional). */
+        mqttTopic: ['$devices/areqjd6un3afc3cefcvm/events'],/* Filter by MQTT Topic (optional). */
         handler: (event, context, message) => {             /* Handler function (required). */
           // Handle IoT Core message trigger event
         }
@@ -771,7 +771,7 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     iot_message: [
       {
-        registryId: 'arenou2oj4ct42eq8g3n',
+        registryId: ['arenou2oj4ct42eq8g3n'],
         handler: (event, context, message) => {
           // Handle IoT Core message trigger event
           // for arenou2oj4ct42eq8g3n registry
@@ -797,7 +797,7 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     iot_message: [
       {
-        deviceId: 'areqjd6un3afc3cefcvm',
+        deviceId: ['areqjd6un3afc3cefcvm'],
         handler: (event, context, message) => {
           // Handle IoT Core message trigger event
           // for areqjd6un3afc3cefcvm device
@@ -823,7 +823,7 @@ import { router } from 'yandex-cloud-functions-router';
 export.handler = router({
     iot_message: [
       {
-        mqttTopic: '$devices/areqjd6un3afc3cefcvm/events',
+        mqttTopic: ['$devices/areqjd6un3afc3cefcvm/events'],
         handler: (event, context, message) => {
           // Handle IoT Core message trigger event
           // by $devices/areqjd6un3afc3cefcvm/events topic

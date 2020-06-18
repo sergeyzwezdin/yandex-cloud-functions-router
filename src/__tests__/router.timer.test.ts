@@ -72,11 +72,11 @@ describe('router', () => {
                 {
                     timer: [
                         {
-                            triggerId: 'a4wt2lnqwvjwnregbqbb',
+                            triggerId: ['a4wt2lnqwvjwnregbqbb'],
                             handler: defaultHandler
                         },
                         {
-                            triggerId: 'b4wt2lnqwvjwnregbqbb',
+                            triggerId: ['b4wt2lnqwvjwnregbqbb'],
                             handler: timerHandler
                         },
                         {
@@ -154,13 +154,13 @@ describe('router', () => {
                 {
                     timer: [
                         {
-                            triggerId: 'a4wt2lnqwvjwnregbqbb',
+                            triggerId: ['a4wt2lnqwvjwnregbqbb'],
                             handler: () => ({
                                 statusCode: 200
                             })
                         },
                         {
-                            triggerId: 'c4wt2lnqwvjwnregbqbb',
+                            triggerId: ['c4wt2lnqwvjwnregbqbb'],
                             handler: () => ({
                                 statusCode: 200
                             })
@@ -189,13 +189,13 @@ describe('router', () => {
                 {
                     timer: [
                         {
-                            triggerId: 'a4wt2lnqwvjwnregbqbb',
+                            triggerId: ['a4wt2lnqwvjwnregbqbb'],
                             handler: () => ({
                                 statusCode: 200
                             })
                         },
                         {
-                            triggerId: 'c4wt2lnqwvjwnregbqbb',
+                            triggerId: ['c4wt2lnqwvjwnregbqbb'],
                             handler: () => ({
                                 statusCode: 200
                             })
