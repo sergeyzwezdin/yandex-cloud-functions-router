@@ -80,11 +80,11 @@ describe('router', () => {
                 {
                     object_storage: [
                         {
-                            type: 'update',
+                            type: ['update'],
                             handler: defaultHandler
                         },
                         {
-                            type: 'create',
+                            type: ['create'],
                             handler: typeHandler
                         },
                         {
@@ -130,11 +130,11 @@ describe('router', () => {
                 {
                     object_storage: [
                         {
-                            type: 'create',
+                            type: ['create'],
                             handler: defaultHandler
                         },
                         {
-                            type: 'update',
+                            type: ['update'],
                             handler: typeHandler
                         },
                         {
@@ -180,11 +180,11 @@ describe('router', () => {
                 {
                     object_storage: [
                         {
-                            type: 'create',
+                            type: ['create'],
                             handler: defaultHandler
                         },
                         {
-                            type: 'delete',
+                            type: ['delete'],
                             handler: typeHandler
                         },
                         {
@@ -230,11 +230,11 @@ describe('router', () => {
                 {
                     object_storage: [
                         {
-                            bucketId: '123',
+                            bucketId: ['123'],
                             handler: defaultHandler
                         },
                         {
-                            bucketId: 's3',
+                            bucketId: ['s3'],
                             handler: bucketHandler
                         },
                         {
@@ -280,11 +280,11 @@ describe('router', () => {
                 {
                     object_storage: [
                         {
-                            objectId: '2.jpg',
+                            objectId: ['2.jpg'],
                             handler: defaultHandler
                         },
                         {
-                            objectId: '1.jpg',
+                            objectId: ['1.jpg'],
                             handler: objectHandler
                         },
                         {
@@ -374,19 +374,19 @@ describe('router', () => {
                 {
                     object_storage: [
                         {
-                            objectId: '2.jpg',
+                            objectId: ['2.jpg'],
                             handler: () => ({
                                 statusCode: 200
                             })
                         },
                         {
-                            bucketId: '1234',
+                            bucketId: ['1234'],
                             handler: () => ({
                                 statusCode: 200
                             })
                         },
                         {
-                            type: 'update',
+                            type: ['update'],
                             handler: () => ({
                                 statusCode: 200
                             })
@@ -419,19 +419,19 @@ describe('router', () => {
                 {
                     object_storage: [
                         {
-                            objectId: '2.jpg',
+                            objectId: ['2.jpg'],
                             handler: () => ({
                                 statusCode: 200
                             })
                         },
                         {
-                            bucketId: '1234',
+                            bucketId: ['1234'],
                             handler: () => ({
                                 statusCode: 200
                             })
                         },
                         {
-                            type: 'update',
+                            type: ['update'],
                             handler: () => ({
                                 statusCode: 200
                             })

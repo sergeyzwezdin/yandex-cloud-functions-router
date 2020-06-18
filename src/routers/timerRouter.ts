@@ -6,9 +6,9 @@ import { NoMatchedRouteError } from '../models/routerError';
 import { TimerRoute } from '../models/routes';
 import { log } from '../helpers/log';
 
-const validateTriggerId = (triggerId: string | undefined, message: CloudFunctionTimerEventMessage) => {
-    if (triggerId) {
-        return message.details.trigger_id === triggerId;
+const validateTriggerId = (triggerIds: string[] | undefined, message: CloudFunctionTimerEventMessage) => {
+    if (triggerIds) {
+        return triggerIds.some((triggerId) => message.details.trigger_id === triggerId);
     } else {
         return true;
     }

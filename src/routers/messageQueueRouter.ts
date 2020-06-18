@@ -7,9 +7,9 @@ import { MessageQueueRoute } from '../models/routes';
 import { log } from '../helpers/log';
 import { matchObjectPattern } from '../helpers/matchObjectPattern';
 
-const validateQueueId = (queueId: string | undefined, message: CloudFunctionMessageQueueEventMessage) => {
-    if (queueId) {
-        return message.details.queue_id === queueId;
+const validateQueueId = (queueIds: string[] | undefined, message: CloudFunctionMessageQueueEventMessage) => {
+    if (queueIds) {
+        return queueIds.some((queueId) => message.details.queue_id === queueId);
     } else {
         return true;
     }

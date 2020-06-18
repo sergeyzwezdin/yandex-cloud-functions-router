@@ -4,9 +4,9 @@ import { CloudFunctionContext } from '../cloudFunctionContext';
 import { CloudFuntionResult } from '../cloudFunctionResult';
 
 type ObjectStorageRoute = {
-    type?: ObjectStorageRouteTypeValidate;
-    bucketId?: string;
-    objectId?: string;
+    type?: ObjectStorageRouteTypeValidate[];
+    bucketId?: string[];
+    objectId?: string[];
     handler: (
         event: CloudFunctionTriggerEvent,
         context: CloudFunctionContext,

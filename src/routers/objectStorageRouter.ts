@@ -6,28 +6,28 @@ import { CloudFuntionResult } from '../models/cloudFunctionResult';
 import { NoMatchedRouteError } from '../models/routerError';
 import { log } from '../helpers/log';
 
-const validateType = (type: ObjectStorageRouteTypeValidate | undefined, message: CloudFunctionObjectStorageEventMessage) => {
-    if (type) {
+const validateType = (types: ObjectStorageRouteTypeValidate[] | undefined, message: CloudFunctionObjectStorageEventMessage) => {
+    if (types) {
         return (
-            (type === 'create' && message.event_metadata.event_type === 'yandex.cloud.events.storage.ObjectCreate') ||
-            (type === 'update' && message.event_metadata.event_type === 'yandex.cloud.events.storage.ObjectUpdate') ||
-            (type === 'delete' && message.event_metadata.event_type === 'yandex.cloud.events.storage.ObjectDelete')
+            (types.some((type) => type === 'create') && message.event_metadata.event_type === 'yandex.cloud.events.storage.ObjectCreate') ||
+            (types.some((type) => type === 'update') && message.event_metadata.event_type === 'yandex.cloud.events.storage.ObjectUpdate') ||
+            (types.some((type) => type === 'delete') && message.event_metadata.event_type === 'yandex.cloud.events.storage.ObjectDelete')
         );
     } else {
         return true;
     }
 };
 
-const validateBucketId = (bucketId: string | undefined, message: CloudFunctionObjectStorageEventMessage) => {
-    if (bucketId) {
-        return bucketId === message.details.bucket_id;
+const validateBucketId = (bucketIds: string[] | undefined, message: CloudFunctionObjectStorageEventMessage) => {
+    if (bucketIds) {
+        return bucketIds.some((bucketId) => bucketId === message.details.bucket_id);
     } else {
         return true;
     }
 };
-const validateObjectId = (objectId: string | undefined, message: CloudFunctionObjectStorageEventMessage) => {
-    if (objectId) {
-        return objectId === message.details.object_id;
+const validateObjectId = (objectIds: string[] | undefined, message: CloudFunctionObjectStorageEventMessage) => {
+    if (objectIds) {
+        return objectIds.some((objectId) => objectId === message.details.object_id);
     } else {
         return true;
     }

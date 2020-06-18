@@ -4,7 +4,7 @@ import { CloudFunctionContext } from '../cloudFunctionContext';
 import { CloudFuntionResult } from '../cloudFunctionResult';
 
 type TimerRoute = {
-    triggerId?: string;
+    triggerId?: string[];
     handler: (
         event: CloudFunctionTriggerEvent,
         context: CloudFunctionContext,

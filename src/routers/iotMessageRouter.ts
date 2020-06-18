@@ -6,25 +6,25 @@ import { IoTMessageRoute } from '../models/routes';
 import { NoMatchedRouteError } from '../models/routerError';
 import { log } from '../helpers/log';
 
-const validateRegistryId = (registryId: string | undefined, message: CloudFunctionIotMessageEventMessage) => {
-    if (registryId) {
-        return registryId === message.details.registry_id;
+const validateRegistryId = (registryIds: string[] | undefined, message: CloudFunctionIotMessageEventMessage) => {
+    if (registryIds) {
+        return registryIds.some((registryId) => registryId === message.details.registry_id);
     } else {
         return true;
     }
 };
 
-const validateDeviceId = (deviceId: string | undefined, message: CloudFunctionIotMessageEventMessage) => {
-    if (deviceId) {
-        return deviceId === message.details.device_id;
+const validateDeviceId = (deviceIds: string[] | undefined, message: CloudFunctionIotMessageEventMessage) => {
+    if (deviceIds) {
+        return deviceIds.some((deviceId) => deviceId === message.details.device_id);
     } else {
         return true;
     }
 };
 
-const validateMqttTopic = (mqttTopic: string | undefined, message: CloudFunctionIotMessageEventMessage) => {
-    if (mqttTopic) {
-        return mqttTopic === message.details.mqtt_topic;
+const validateMqttTopic = (mqttTopics: string[] | undefined, message: CloudFunctionIotMessageEventMessage) => {
+    if (mqttTopics) {
+        return mqttTopics.some((mqttTopic) => mqttTopic === message.details.mqtt_topic);
     } else {
         return true;
     }
