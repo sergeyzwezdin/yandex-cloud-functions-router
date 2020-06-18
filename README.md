@@ -96,6 +96,7 @@ export.handler = router({
         httpMethod: ['GET'],           /* Filter by HTTP method (required). */
         params: { },                   /* Filter by Query String params (optional). */
         body: { },                     /* Filter by body content (optional). */
+        validators: { },               /* Additional validator(s) for the event. */
         handler: (event, context) => { /* Handler function (required). */
           // Handle HTTP GET request
 
@@ -313,6 +314,45 @@ export.handler = router({
 </p>
 </details>
 
+### Validators
+
+Validators supposed to validate the event's content. In contrast to filtering, the route won't be skipped if the validator fails. Instead, exception will be thrown (and could be handled as a final HTTP 400 error). It is useful to use validators, when you're sure that it's the right route, but want to ensure that incoming request contains the correct data. For instance, if an incoming request doesn't contain the required field, it will fail.
+
+<details>
+<summary>Example</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    http: [
+      {
+        httpMethod: ['POST'],
+        validators: [
+          (event, context) => {
+              if (/* check something in the event */) {
+                  return true;
+              }
+
+              return false;
+          }
+        ],
+        handler: (event, context) => {
+          // Here you are sure that the request contains the correct data
+
+          return {
+            statusCode: 200
+          };
+        }
+      }
+    ]
+  });
+```
+
+</p>
+</details>
+
 ### CORS
 
 To handle [CORS requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) add second param to the `router` function:
@@ -415,6 +455,7 @@ export.handler = router({
       {
         queueId: 'a4wt2lnqwvjwnregbqbb',         /* Filter by queue identifier (optional). */
         body: { },                               /* Filter by body content (optional). */
+        validators: { },                         /* Additional validator(s) for the event. */
         handler: (event, context, message) => {  /* Handler function (required). */
           // Handle Message Queue trigger event
         }
@@ -534,6 +575,41 @@ export.handler = router({
         handler: (event, context, message) => {
           // Handle Message Queue trigger event
           // whose body contains "update" word
+        }
+      }
+    ]
+  });
+```
+
+</p>
+</details>
+
+
+### Validators
+
+Validators supposed to validate the event's content. In contrast to filtering, the route won't be skipped if the validator fails. Instead, exception will be thrown. It is useful to use validators, when you're sure that it's the right route, but want to ensure that incoming request contains the correct data. For instance, if an incoming request doesn't contain the required field, it will fail.
+
+<details>
+<summary>Example</summary>
+<p>
+
+```typescript
+import { router } from 'yandex-cloud-functions-router';
+
+export.handler = router({
+    message_queue: [
+      {
+        validators: [
+          (event, context) => {
+              if (/* check something in the event */) {
+                  return true;
+              }
+
+              return false;
+          }
+        ],
+        handler: (event, context, message) => {
+          // Here you are sure that the request contains the correct data
         }
       }
     ]

@@ -1,4 +1,4 @@
-import { HttpParamNotSupportedTypeRouteError, NoMatchedRouteError } from '../models/routerError';
+import { HttpParamNotSupportedTypeRouteError, InvalidRequestError, NoMatchedRouteError } from '../models/routerError';
 import { HttpRoute, HttpRouteBodyPatternValidate, HttpRouteParamValidate } from '../models/routes';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
@@ -88,14 +88,20 @@ const httpRouter: (
 ) => Promise<CloudFuntionResult> = async (routes, event, context, options) => {
     const corsOptions = resolveCorsOptions(options?.cors);
 
-    for (const { httpMethod, params, body, handler } of routes) {
+    for (const { httpMethod, params, body, validators, handler } of routes) {
         const matched = validateHttpMethod(httpMethod, event) && validateParams(params, event) && validateBodyPattern(body, event);
 
         if (matched) {
-            const handlerResult = handler(event, context);
-            const result = handlerResult instanceof Promise ? await handlerResult : handlerResult;
+            const validatorsPassed = validators ? validators.every((validator) => validator(event, context)) : true;
+            if (validatorsPassed) {
+                const handlerResult = handler(event, context);
+                const result = handlerResult instanceof Promise ? await handlerResult : handlerResult;
 
-            return appendCorsHeadersToMainResponse(event, result, corsOptions);
+                return appendCorsHeadersToMainResponse(event, result, corsOptions);
+            } else {
+                log('WARN', context.requestId, 'Invalid request', {});
+                throw new InvalidRequestError('Invalid request.');
+            }
         }
     }
 

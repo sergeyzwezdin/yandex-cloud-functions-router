@@ -8,7 +8,13 @@ import {
     isTriggerEvent
 } from './models/cloudFunctionEvent';
 import { ErrorHandlingOptions, RouterOptions } from './models/routerOptions';
-import { NoMatchedRouteError, TriggerRouteError, UnknownEventTypeRouteError, UnknownMessageTypeRouteError } from './models/routerError';
+import {
+    InvalidRequestError,
+    NoMatchedRouteError,
+    TriggerRouteError,
+    UnknownEventTypeRouteError,
+    UnknownMessageTypeRouteError
+} from './models/routerError';
 
 import { CloudFunctionContext } from './models/cloudFunctionContext';
 import { CloudFuntionResult } from './models/cloudFunctionResult';
@@ -99,10 +105,13 @@ const router: (
         }
     } catch (error) {
         const errorHandling =
-            options?.errorHandling ||
+            options?.errorHandling ??
             ({
                 notFound: () => ({
                     statusCode: 404
+                }),
+                invalidRequest: () => ({
+                    statusCode: 400
                 }),
                 unknownEvent: () => ({
                     statusCode: 404
@@ -115,6 +124,8 @@ const router: (
         if (errorHandling) {
             if (error instanceof NoMatchedRouteError && errorHandling.notFound) {
                 return errorHandling.notFound(error);
+            } else if (error instanceof InvalidRequestError && errorHandling.invalidRequest) {
+                return errorHandling.invalidRequest(error);
             } else if (error instanceof UnknownEventTypeRouteError && errorHandling.unknownEvent) {
                 return errorHandling.unknownEvent(error);
             } else if (error instanceof UnknownMessageTypeRouteError && errorHandling.unknownMessage) {

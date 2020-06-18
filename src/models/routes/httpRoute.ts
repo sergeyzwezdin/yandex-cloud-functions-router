@@ -7,6 +7,7 @@ type HttpRoute = {
     httpMethod?: HttpMethod[];
     params?: HttpRouteParamValidate;
     body?: HttpRouteBodyPatternValidate;
+    validators?: CustomHttpValidator[];
     handler: (event: CloudFunctionHttpEvent, context: CloudFunctionContext) => CloudFuntionResult | Promise<CloudFuntionResult>;
 };
 
@@ -24,4 +25,6 @@ type HttpRouteBodyPatternValidate = {
     json?: object;
 };
 
-export { HttpRoute, HttpRouteParamValidateType, HttpRouteParamValidate, HttpRouteBodyPatternValidate };
+type CustomHttpValidator = (event: CloudFunctionHttpEvent, context: CloudFunctionContext) => boolean;
+
+export { HttpRoute, HttpRouteParamValidateType, HttpRouteParamValidate, HttpRouteBodyPatternValidate, CustomHttpValidator };

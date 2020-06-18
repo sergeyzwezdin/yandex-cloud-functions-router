@@ -1,9 +1,9 @@
 import { CloudFunctionMessageQueueEventMessage, CloudFunctionTriggerEvent } from '../models/cloudFunctionEvent';
+import { InvalidRequestError, NoMatchedRouteError } from '../models/routerError';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
 import { CloudFuntionResult } from '../models/cloudFunctionResult';
 import { MessageQueueRoute } from '../models/routes';
-import { NoMatchedRouteError } from '../models/routerError';
 import { log } from '../helpers/log';
 import { matchObjectPattern } from '../helpers/matchObjectPattern';
 
@@ -19,7 +19,6 @@ const validateBodyJson = (pattern: object | undefined, message: CloudFunctionMes
     if (pattern) {
         try {
             const bodyObject = JSON.parse(message.details.message.body);
-            const t = matchObjectPattern(bodyObject, pattern);
             return matchObjectPattern(bodyObject, pattern);
         } catch (e) {
             if (e instanceof SyntaxError) {
@@ -51,16 +50,23 @@ const messageQueueRouter: (
     message: CloudFunctionMessageQueueEventMessage,
     context: CloudFunctionContext
 ) => Promise<CloudFuntionResult> = async (routes, event, message, context) => {
-    for (const { queueId, body, handler } of routes) {
+    for (const { queueId, body, validators, handler } of routes) {
         const matched =
             validateQueueId(queueId, message) && validateBodyJson(body?.json, message) && validateBodyPattern(body?.pattern, message);
 
         if (matched) {
-            const result = handler(event, context, message);
-            if (result instanceof Promise) {
-                return result;
+            const validatorsPassed = validators ? validators.every((validator) => validator(event, context, message)) : true;
+
+            if (validatorsPassed) {
+                const result = handler(event, context, message);
+                if (result instanceof Promise) {
+                    return result;
+                } else {
+                    return Promise.resolve(result);
+                }
             } else {
-                return Promise.resolve(result);
+                log('WARN', context.requestId, 'Invalid request', {});
+                throw new InvalidRequestError('Invalid request.');
             }
         }
     }
