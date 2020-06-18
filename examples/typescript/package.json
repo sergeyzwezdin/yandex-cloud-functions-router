@@ -13,6 +13,6 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
-    "yandex-cloud-functions-router": "0.0.1-1"
+    "yandex-cloud-functions-router": "^1.2.0"
   }
 }

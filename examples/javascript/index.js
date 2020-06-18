@@ -96,7 +96,7 @@ export const handler = router({
 
     timer: [
         {
-            triggerId: 'a4wt2lnqwvjwnregbqbb',
+            triggerId: ['a4wt2lnqwvjwnregbqbb'],
             handler: (event, context, message) => {
                 // Handle a4wt2lnqwvjwnregbqbb timer
                 console.log({ event, context });
@@ -123,7 +123,7 @@ export const handler = router({
 
     message_queue: [
         {
-            queueId: 'a4wt2lnqwvjwnregbqbb',
+            queueId: ['a4wt2lnqwvjwnregbqbb'],
             body: {
                 json: {
                     type: 'add'
@@ -143,7 +143,7 @@ export const handler = router({
         },
 
         {
-            queueId: 'a4wt2lnqwvjwnregbqbb',
+            queueId: ['a4wt2lnqwvjwnregbqbb'],
             body: {
                 pattern: /test/i
             },
@@ -175,8 +175,8 @@ export const handler = router({
 
     object_storage: [
         {
-            type: 'create',
-            bucketId: 's3',
+            type: ['create'],
+            bucketId: ['s3'],
             handler: (event, context, message) => {
                 // Handle Object Storage trigger create event
                 // for "s3" bucket
@@ -189,7 +189,7 @@ export const handler = router({
         },
 
         {
-            bucketId: 's3',
+            bucketId: ['s3'],
             handler: (event, context, message) => {
                 // Handle Object Storage trigger event
                 // for "s3" bucket
@@ -202,7 +202,7 @@ export const handler = router({
         },
 
         {
-            objectId: '1.jpg',
+            objectId: ['1.jpg'],
             handler: (event, context, message) => {
                 // Handle Object Storage trigger event
                 // for "1.jpg" object
@@ -230,9 +230,8 @@ export const handler = router({
 
     iot_message: [
         {
-            registryId: 'arenou2oj4ct42eq8g3n',
-            deviceId: 'areqjd6un3afc3cefcvm',
-
+            registryId: ['arenou2oj4ct42eq8g3n'],
+            deviceId: ['areqjd6un3afc3cefcvm'],
             handler: (event, context, message) => {
                 // Handle IoT Core message trigger event
                 // for "arenou2oj4ct42eq8g3n" registry
@@ -246,7 +245,7 @@ export const handler = router({
         },
 
         {
-            registryId: 'arenou2oj4ct42eq8g3n',
+            registryId: ['arenou2oj4ct42eq8g3n'],
             handler: (event, context, message) => {
                 // Handle IoT Core message trigger event
                 // for "arenou2oj4ct42eq8g3n" registry
@@ -259,7 +258,7 @@ export const handler = router({
         },
 
         {
-            deviceId: 'areqjd6un3afc3cefcvm',
+            deviceId: ['areqjd6un3afc3cefcvm'],
             handler: (event, context, message) => {
                 // Handle IoT Core message trigger event
                 // for "areqjd6un3afc3cefcvm" device
@@ -272,7 +271,7 @@ export const handler = router({
         },
 
         {
-            mqttTopic: '$devices/areqjd6un3afc3cefcvm/events',
+            mqttTopic: ['$devices/areqjd6un3afc3cefcvm/events'],
             handler: (event, context, message) => {
                 // Handle IoT Core message trigger event
                 // for "$devices/areqjd6un3afc3cefcvm/events" topic
@@ -285,7 +284,7 @@ export const handler = router({
         },
 
         {
-            mqttTopic: '$devices/areqjd6un3afc3cefcvm/events',
+            mqttTopic: ['$devices/areqjd6un3afc3cefcvm/events'],
             handler: (event, context, message) => {
                 // Handle any ohter IoT Core message trigger events
                 console.log({ event, context, message });
