@@ -1,6 +1,6 @@
 jest.mock('../helpers/matchObjectPattern');
 
-import { HttpParamNotSupportedTypeRouteError, NoMatchedRouteError } from '../models/routerError';
+import { HttpParamNotSupportedTypeRouteError, InvalidRequestError, NoMatchedRouteError } from '../models/routerError';
 import { eventContext, httpMethodEvent } from '../__data__/router.data';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
@@ -100,6 +100,103 @@ describe('router', () => {
             expect(postHandler).toBeCalledTimes(0);
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+        });
+
+        it('handles GET request with validator', async () => {
+            // Arrange
+            const handler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
+                statusCode: 200
+            }));
+            const route = router(
+                {
+                    http: [
+                        {
+                            handler,
+                            // @ts-ignore
+                            httpMethod: ['Get'], // intentionally case-insensitive method name check
+                            validators: [(event: CloudFunctionHttpEvent, context: CloudFunctionContext) => true]
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
+            expect(handler).toBeCalledTimes(1);
+        });
+
+        it('fails GET request with validator (/wo errorhandling)', async () => {
+            // Arrange
+            const handler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
+                statusCode: 200
+            }));
+            const route = router(
+                {
+                    http: [
+                        {
+                            handler,
+                            // @ts-ignore
+                            httpMethod: ['Get'], // intentionally case-insensitive method name check
+                            validators: [(event: CloudFunctionHttpEvent, context: CloudFunctionContext) => false]
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
+
+            // Act
+            const result = route(event, context);
+
+            // Assert
+            await expect(result).rejects.toThrow(InvalidRequestError);
+            expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} Invalid request`]]);
+        });
+
+        it('fails GET request with validator (/w errorhandling)', async () => {
+            // Arrange
+            const handler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
+                statusCode: 200
+            }));
+            const route = router({
+                http: [
+                    {
+                        handler,
+                        // @ts-ignore
+                        httpMethod: ['Get'], // intentionally case-insensitive method name check
+                        validators: [(event: CloudFunctionHttpEvent, context: CloudFunctionContext) => false]
+                    }
+                ]
+            });
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(400);
+            }
+            expect(handler).toBeCalledTimes(0);
+            expect(consoleMock.warn.mock.calls).toEqual([
+                [`[ROUTER] WARN RequestID: cfa8a4b4-cf6a-48e4-959d-83d876463e57 Invalid request`]
             ]);
         });
 

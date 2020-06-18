@@ -6,6 +6,14 @@ class NoMatchedRouteError extends Error {
     }
 }
 
+class InvalidRequestError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'ERR_INVALID_REQUEST';
+        Object.setPrototypeOf(this, InvalidRequestError.prototype);
+    }
+}
+
 class UnknownEventTypeRouteError extends Error {
     constructor(message: string) {
         super(message);
@@ -40,6 +48,7 @@ class TriggerRouteError extends Error {
 
 export {
     NoMatchedRouteError,
+    InvalidRequestError,
     HttpParamNotSupportedTypeRouteError,
     UnknownEventTypeRouteError,
     UnknownMessageTypeRouteError,
