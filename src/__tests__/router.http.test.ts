@@ -168,6 +168,43 @@ describe('router', () => {
             expect(consoleMock.warn.mock.calls).toEqual([[`[ROUTER] WARN RequestID: ${context.requestId} Invalid request`]]);
         });
 
+        it('fails GET request with validator throwing an exception', async () => {
+            // Arrange
+            const handler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
+                statusCode: 200
+            }));
+            const route = router(
+                {
+                    http: [
+                        {
+                            handler,
+                            httpMethod: ['GET'],
+                            validators: [
+                                () => {
+                                    throw new Error('Valiator error');
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
+
+            // Act
+            const result = route(event, context);
+
+            // Assert
+            await expect(result).rejects.toThrow(InvalidRequestError);
+            expect(consoleMock.warn.mock.calls).toEqual([
+                [`[ROUTER] WARN RequestID: ${context.requestId} Validator failed with error: Error: Valiator error`],
+                [`[ROUTER] WARN RequestID: ${context.requestId} Invalid request`]
+            ]);
+        });
+
         it('fails GET request with validator (/w errorhandling)', async () => {
             // Arrange
             const handler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({

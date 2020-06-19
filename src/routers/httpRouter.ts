@@ -1,5 +1,5 @@
+import { CustomHttpValidator, HttpRoute, HttpRouteBodyPatternValidate, HttpRouteParamValidate } from '../models/routes';
 import { HttpParamNotSupportedTypeRouteError, InvalidRequestError, NoMatchedRouteError } from '../models/routerError';
-import { HttpRoute, HttpRouteBodyPatternValidate, HttpRouteParamValidate } from '../models/routes';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
 import { CloudFunctionHttpEvent } from '../models/cloudFunctionEvent';
@@ -80,6 +80,19 @@ const validateBodyPattern = (pattern: HttpRouteBodyPatternValidate | undefined, 
     }
 };
 
+const validateWithValidators = (
+    validators: CustomHttpValidator[] | undefined,
+    event: CloudFunctionHttpEvent,
+    context: CloudFunctionContext
+) => {
+    try {
+        return validators ? validators.every((validator) => validator(event, context)) : true;
+    } catch (e) {
+        log('WARN', context.requestId, `Validator failed with error: ${(e?.toString() ?? 'unknown error').replace(/[\r\n]+/g, '')}`, {});
+        return false;
+    }
+};
+
 const httpRouter: (
     routes: HttpRoute[],
     event: CloudFunctionHttpEvent,
@@ -92,7 +105,7 @@ const httpRouter: (
         const matched = validateHttpMethod(httpMethod, event) && validateParams(params, event) && validateBodyPattern(body, event);
 
         if (matched) {
-            const validatorsPassed = validators ? validators.every((validator) => validator(event, context)) : true;
+            const validatorsPassed = validateWithValidators(validators, event, context);
             if (validatorsPassed) {
                 const handlerResult = handler(event, context);
                 const result = handlerResult instanceof Promise ? await handlerResult : handlerResult;

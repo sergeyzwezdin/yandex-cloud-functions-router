@@ -1,9 +1,9 @@
 import { CloudFunctionMessageQueueEventMessage, CloudFunctionTriggerEvent } from '../models/cloudFunctionEvent';
+import { CustomMessageQueueValidator, MessageQueueRoute } from '../models/routes';
 import { InvalidRequestError, NoMatchedRouteError } from '../models/routerError';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
 import { CloudFuntionResult } from '../models/cloudFunctionResult';
-import { MessageQueueRoute } from '../models/routes';
 import { log } from '../helpers/log';
 import { matchObjectPattern } from '../helpers/matchObjectPattern';
 
@@ -44,6 +44,20 @@ const validateBodyPattern = (pattern: RegExp | undefined, message: CloudFunction
     }
 };
 
+const validateWithValidators = (
+    validators: CustomMessageQueueValidator[] | undefined,
+    event: CloudFunctionTriggerEvent,
+    context: CloudFunctionContext,
+    message: CloudFunctionMessageQueueEventMessage
+) => {
+    try {
+        return validators ? validators.every((validator) => validator(event, context, message)) : true;
+    } catch (e) {
+        log('WARN', context.requestId, `Validator failed with error: ${(e?.toString() ?? 'unknown error').replace(/[\r\n]+/g, '')}`, {});
+        return false;
+    }
+};
+
 const messageQueueRouter: (
     routes: MessageQueueRoute[],
     event: CloudFunctionTriggerEvent,
@@ -55,7 +69,7 @@ const messageQueueRouter: (
             validateQueueId(queueId, message) && validateBodyJson(body?.json, message) && validateBodyPattern(body?.pattern, message);
 
         if (matched) {
-            const validatorsPassed = validators ? validators.every((validator) => validator(event, context, message)) : true;
+            const validatorsPassed = validateWithValidators(validators, event, context, message);
 
             if (validatorsPassed) {
                 const result = handler(event, context, message);
