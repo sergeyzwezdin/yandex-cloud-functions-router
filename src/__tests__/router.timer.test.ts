@@ -27,9 +27,7 @@ describe('router', () => {
         it('handles any request', async () => {
             // Arrange
             const handler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionTimerEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionTimerEventMessage) => {}
             );
             const route = router(
                 {
@@ -48,8 +46,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
             expect(handler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing timer trigger message Trigger Id: b4wt2lnqwvjwnregbqbb`]
@@ -59,14 +55,10 @@ describe('router', () => {
         it('handles request by trigger ID', async () => {
             // Arrange
             const defaultHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionTimerEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionTimerEventMessage) => {}
             );
             const timerHandler = jest.fn(
-                async (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionTimerEventMessage) => ({
-                    statusCode: 200
-                })
+                async (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionTimerEventMessage) => {}
             );
             const route = router(
                 {
@@ -93,8 +85,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(timerHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -155,15 +145,11 @@ describe('router', () => {
                     timer: [
                         {
                             triggerId: ['a4wt2lnqwvjwnregbqbb'],
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         },
                         {
                             triggerId: ['c4wt2lnqwvjwnregbqbb'],
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         }
                     ]
                 },
@@ -190,15 +176,11 @@ describe('router', () => {
                     timer: [
                         {
                             triggerId: ['a4wt2lnqwvjwnregbqbb'],
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         },
                         {
                             triggerId: ['c4wt2lnqwvjwnregbqbb'],
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         }
                     ]
                 },

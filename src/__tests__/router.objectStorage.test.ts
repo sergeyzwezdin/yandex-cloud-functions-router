@@ -27,9 +27,7 @@ describe('router', () => {
         it('handles any request', async () => {
             // Arrange
             const handler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => {}
             );
             const route = router(
                 {
@@ -52,8 +50,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
             expect(handler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing object storage message Bucket Id: s3 Object Id: 1.jpg`]
@@ -63,9 +59,7 @@ describe('router', () => {
         it('handles request by type (create)', async () => {
             // Arrange
             const defaultHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => {}
             );
             const typeHandler = jest.fn(
                 async (
@@ -105,8 +99,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(typeHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -117,14 +109,10 @@ describe('router', () => {
         it('handles request by type (update)', async () => {
             // Arrange
             const defaultHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => {}
             );
             const typeHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => {}
             );
             const route = router(
                 {
@@ -155,8 +143,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(typeHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -167,14 +153,10 @@ describe('router', () => {
         it('handles request by type (delete)', async () => {
             // Arrange
             const defaultHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => {}
             );
             const typeHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => {}
             );
             const route = router(
                 {
@@ -205,8 +187,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(typeHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -217,14 +197,10 @@ describe('router', () => {
         it('handles request by bucket ID', async () => {
             // Arrange
             const defaultHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => {}
             );
             const bucketHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => {}
             );
             const route = router(
                 {
@@ -255,8 +231,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(bucketHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -267,14 +241,10 @@ describe('router', () => {
         it('handles request by object ID', async () => {
             // Arrange
             const defaultHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => {}
             );
             const objectHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionObjectStorageEventMessage) => {}
             );
             const route = router(
                 {
@@ -305,8 +275,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(objectHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -375,21 +343,15 @@ describe('router', () => {
                     object_storage: [
                         {
                             objectId: ['2.jpg'],
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         },
                         {
                             bucketId: ['1234'],
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         },
                         {
                             type: ['update'],
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         }
                     ]
                 },
@@ -420,21 +382,15 @@ describe('router', () => {
                     object_storage: [
                         {
                             objectId: ['2.jpg'],
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         },
                         {
                             bucketId: ['1234'],
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         },
                         {
                             type: ['update'],
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         }
                     ]
                 },

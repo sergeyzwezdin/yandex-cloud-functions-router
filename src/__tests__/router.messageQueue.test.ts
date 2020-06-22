@@ -31,9 +31,7 @@ describe('router', () => {
         it('handles any request', async () => {
             // Arrange
             const handler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => {}
             );
             const route = router(
                 {
@@ -52,8 +50,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
             expect(handler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
@@ -63,9 +59,7 @@ describe('router', () => {
         it('handles request by queue ID', async () => {
             // Arrange
             const defaultHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => {}
             );
             const queueHandler = jest.fn(
                 async (
@@ -101,8 +95,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(queueHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -113,14 +105,10 @@ describe('router', () => {
         it('handles request by body (json)', async () => {
             // Arrange
             const defaultHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => {}
             );
             const queueHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => {}
             );
             const route = router(
                 {
@@ -157,8 +145,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(queueHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -169,9 +155,7 @@ describe('router', () => {
         it('skips request by body (json) because of malformed JSON in body', async () => {
             // Arrange
             const handler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => {}
             );
             const route = router(
                 {
@@ -207,9 +191,7 @@ describe('router', () => {
         it('handles request by body (json) with validator', async () => {
             // Arrange
             const handler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => {}
             );
             const route = router(
                 {
@@ -241,17 +223,13 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
             expect(handler).toBeCalledTimes(1);
         });
 
         it('fails request by body (json) with validator (/w error handling)', async () => {
             // Arrange
             const handler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => {}
             );
             const route = router({
                 message_queue: [
@@ -280,8 +258,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(400);
             expect(handler).toBeCalledTimes(0);
             expect(consoleMock.warn.mock.calls).toEqual([
                 [`[ROUTER] WARN RequestID: cfa8a4b4-cf6a-48e4-959d-83d876463e57 Invalid request`]
@@ -291,9 +267,7 @@ describe('router', () => {
         it('fails request by body (json) with validator (/wo error handling)', async () => {
             // Arrange
             const handler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => {}
             );
             const route = router(
                 {
@@ -332,9 +306,7 @@ describe('router', () => {
         it('fails request by body (json) with validator throwing an exception', async () => {
             // Arrange
             const handler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => {}
             );
             const route = router(
                 {
@@ -374,14 +346,10 @@ describe('router', () => {
         it('handles request by body (regexp)', async () => {
             // Arrange
             const defaultHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => {}
             );
             const queueHandler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => {}
             );
             const route = router(
                 {
@@ -414,8 +382,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            expect(result?.statusCode).toBe(200);
             expect(defaultHandler).toBeCalledTimes(0);
             expect(queueHandler).toBeCalledTimes(1);
             expect(consoleMock.info.mock.calls).toEqual([
@@ -426,9 +392,7 @@ describe('router', () => {
         it('skips request because of empty body (regexp)', async () => {
             // Arrange
             const handler = jest.fn(
-                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => ({
-                    statusCode: 200
-                })
+                (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => {}
             );
             const route = router(
                 {
@@ -509,9 +473,7 @@ describe('router', () => {
                             body: {
                                 json: {}
                             },
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         }
                     ]
                 },
@@ -535,10 +497,6 @@ describe('router', () => {
             const result = await route(event, context);
 
             // Assert
-            expect(result).toBeDefined();
-            if (result) {
-                expect(result.statusCode).toBe(501);
-            }
             expect(consoleMock.info.mock.calls).toEqual([
                 [`[ROUTER] INFO RequestID: ${context.requestId} Processing message queue message Queue Id: b4wt2lnqwvjwnregbqbb`]
             ]);
@@ -603,9 +561,7 @@ describe('router', () => {
                             body: {
                                 pattern: /update/i
                             },
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         },
                         {
                             queueId: ['b4wt2lnqwvjwnregbqbb'],
@@ -614,9 +570,7 @@ describe('router', () => {
                                     type: 'update'
                                 }
                             },
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         },
                         {
                             queueId: ['a4wt2lnqwvjwnregbqbb'],
@@ -625,9 +579,7 @@ describe('router', () => {
                                     type: 'add'
                                 }
                             },
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         }
                     ]
                 },
@@ -657,9 +609,7 @@ describe('router', () => {
                             body: {
                                 pattern: /update/i
                             },
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         },
                         {
                             queueId: ['b4wt2lnqwvjwnregbqbb'],
@@ -668,9 +618,7 @@ describe('router', () => {
                                     type: 'update'
                                 }
                             },
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         },
                         {
                             queueId: ['a4wt2lnqwvjwnregbqbb'],
@@ -679,9 +627,7 @@ describe('router', () => {
                                     type: 'add'
                                 }
                             },
-                            handler: () => ({
-                                statusCode: 200
-                            })
+                            handler: () => {}
                         }
                     ]
                 },
