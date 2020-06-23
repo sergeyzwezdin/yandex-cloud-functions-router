@@ -251,6 +251,7 @@ describe('router', () => {
                         {
                             // @ts-ignore
                             httpMethod: ['Post'], // intentionally case-insensitive method name check
+                            decodeBase64body: true,
                             handler: postHandler
                         },
                         {
@@ -264,7 +265,11 @@ describe('router', () => {
                     errorHandling: {}
                 }
             );
-            const event = httpMethodEvent({ httpMethod: 'POST' });
+            const event = httpMethodEvent({
+                httpMethod: 'POST',
+                body: 'eD10ZXN0Jnk9MTIzNA==',
+                isBase64Encoded: false
+            });
             const context = eventContext();
 
             // Act
@@ -277,8 +282,60 @@ describe('router', () => {
             }
             expect(getHandler).toBeCalledTimes(0);
             expect(postHandler).toBeCalledTimes(1);
+            expect(postHandler.mock.calls[0][0].body).toBe('eD10ZXN0Jnk9MTIzNA==');
             expect(consoleMock.info.mock.calls).toEqual([
-                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 20 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+        });
+
+        it('handles POST request with base64 encoded message', async () => {
+            // Arrange
+            const getHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
+                statusCode: 200
+            }));
+            const postHandler = jest.fn(async (event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
+                statusCode: 200
+            }));
+            const route = router(
+                {
+                    http: [
+                        {
+                            // @ts-ignore
+                            httpMethod: ['Post'], // intentionally case-insensitive method name check
+                            decodeBase64Body: true,
+                            handler: postHandler
+                        },
+                        {
+                            // @ts-ignore
+                            httpMethod: ['Get'], // intentionally case-insensitive method name check
+                            handler: getHandler
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
+            const event = httpMethodEvent({
+                httpMethod: 'POST',
+                body: 'eD10ZXN0Jnk9MTIzNA==',
+                isBase64Encoded: true
+            });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
+            expect(getHandler).toBeCalledTimes(0);
+            expect(postHandler).toBeCalledTimes(1);
+            expect(postHandler.mock.calls[0][0].body).toBe('x=test&y=1234');
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 20 Query: {} Headers: {"User-Agent":"jest"}`]
             ]);
         });
 

@@ -8,6 +8,7 @@ type HttpRoute = {
     params?: HttpRouteParamValidate;
     body?: HttpRouteBodyPatternValidate;
     validators?: CustomHttpValidator[];
+    decodeBase64Body?: boolean;
     handler: (event: CloudFunctionHttpEvent, context: CloudFunctionContext) => CloudFuntionResult | Promise<CloudFuntionResult>;
 };
 

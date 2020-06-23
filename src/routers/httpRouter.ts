@@ -93,6 +93,15 @@ const validateWithValidators = (
     }
 };
 
+const unwrapBase64Body: (event: CloudFunctionHttpEvent) => CloudFunctionHttpEvent = (event) => {
+    if (event.isBase64Encoded) {
+        const body = Buffer.from(event.body ?? '', 'base64').toString('utf-8');
+        return { ...event, body, isBase64Encoded: false };
+    } else {
+        return event;
+    }
+};
+
 const httpRouter: (
     routes: HttpRoute[],
     event: CloudFunctionHttpEvent,
@@ -101,13 +110,13 @@ const httpRouter: (
 ) => Promise<CloudFuntionResult> = async (routes, event, context, options) => {
     const corsOptions = resolveCorsOptions(options?.cors);
 
-    for (const { httpMethod, params, body, validators, handler } of routes) {
+    for (const { httpMethod, params, body, validators, decodeBase64Body, handler } of routes) {
         const matched = validateHttpMethod(httpMethod, event) && validateParams(params, event) && validateBodyPattern(body, event);
 
         if (matched) {
             const validatorsPassed = validateWithValidators(validators, event, context);
             if (validatorsPassed) {
-                const handlerResult = handler(event, context);
+                const handlerResult = handler(decodeBase64Body ? unwrapBase64Body(event) : event, context);
                 const result = handlerResult instanceof Promise ? await handlerResult : handlerResult;
 
                 return appendCorsHeadersToMainResponse(event, result, corsOptions);

@@ -10,7 +10,8 @@ const httpMethodEvent: (data: {
     headers?: { [name: string]: string };
     body?: string;
     queryStringParameters?: { [name: string]: string };
-}) => CloudFunctionEvent = ({ httpMethod, headers, body, queryStringParameters }) => ({
+    isBase64Encoded?: boolean;
+}) => CloudFunctionEvent = ({ httpMethod, headers, body, queryStringParameters, isBase64Encoded }) => ({
     httpMethod,
     headers: {
         'User-Agent': 'jest',
@@ -30,7 +31,7 @@ const httpMethodEvent: (data: {
         requestTime: '6/Jun/2020:02:56:40 +0000',
         requestTimeEpoch: 1591412200
     },
-    isBase64Encoded: false
+    isBase64Encoded: isBase64Encoded ?? false
 });
 
 const timerEvent: (data: { triggerId: string }) => CloudFunctionEvent = ({ triggerId }) => ({
