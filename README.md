@@ -96,6 +96,7 @@ export.handler = router({
         httpMethod: ['GET'],           /* Filter by HTTP method (required). */
         params: { },                   /* Filter by Query String params (optional). */
         body: { },                     /* Filter by body content (optional). */
+        decodeBase64Body: false,       /* Whether to decode base64 requests. */
         validators: { },               /* Additional validator(s) for the event. */
         handler: (event, context) => { /* Handler function (required). */
           // Handle HTTP GET request
