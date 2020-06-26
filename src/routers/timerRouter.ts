@@ -1,14 +1,20 @@
 import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from '../models/cloudFunctionEvent';
+import { debug, log } from '../helpers/log';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
 import { CloudFuntionResult } from '../models/cloudFunctionResult';
 import { NoMatchedRouteError } from '../models/routerError';
 import { TimerRoute } from '../models/routes';
-import { log } from '../helpers/log';
 
-const validateTriggerId = (triggerIds: string[] | undefined, message: CloudFunctionTimerEventMessage) => {
+const validateTriggerId = (context: CloudFunctionContext, triggerIds: string[] | undefined, message: CloudFunctionTimerEventMessage) => {
     if (triggerIds) {
-        return triggerIds.some((triggerId) => message.details.trigger_id === triggerId);
+        const result = triggerIds.some((triggerId) => message.details.trigger_id === triggerId);
+        debug(context.requestId, `Validating trigger id: ${result ? 'valid' : 'invalid'}`, {
+            request: message.details.trigger_id,
+            route: triggerIds
+        });
+
+        return result;
     } else {
         return true;
     }
@@ -20,14 +26,20 @@ const timerRouter: (
     message: CloudFunctionTimerEventMessage,
     context: CloudFunctionContext
 ) => Promise<CloudFuntionResult> = async (routes, event, message, context) => {
+    debug(context.requestId, 'Timer processing started', {});
+
     for (const { handler, triggerId } of routes) {
-        const matched = validateTriggerId(triggerId, message);
+        const matched = validateTriggerId(context, triggerId, message);
+
+        debug(context.requestId, 'Timer matching completed', { message, matched, triggerId: triggerId ?? '' });
 
         if (matched) {
             const result = handler(event, context, message);
             if (result instanceof Promise) {
+                debug(context.requestId, 'Timer processed', {});
                 return result;
             } else {
+                debug(context.requestId, 'Timer processed', {});
                 return Promise.resolve(result);
             }
         }
