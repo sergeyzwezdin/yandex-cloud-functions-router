@@ -140,6 +140,7 @@ const validateWithValidators = (
 
 const unwrapBase64Body: (event: CloudFunctionHttpEvent) => CloudFunctionHttpEvent = (event) => {
     if (event.isBase64Encoded) {
+        debug(event.requestContext.requestId, 'HTTP request - unwrapping base64 body', {});
         const body = Buffer.from(event.body ?? '', 'base64').toString('utf-8');
         return { ...event, body, isBase64Encoded: false };
     } else {
@@ -169,12 +170,13 @@ const httpRouter: (
         });
 
         if (matched) {
-            const validatorsPassed = validateWithValidators(validators, event, context);
+            const unwrappedEvent = decodeBase64Body ? unwrapBase64Body(event) : event;
+            const validatorsPassed = validateWithValidators(validators, unwrappedEvent, context);
 
             debug(context.requestId, 'HTTP request validating completed', { validatorsPassed });
 
             if (validatorsPassed) {
-                const handlerResult = handler(decodeBase64Body ? unwrapBase64Body(event) : event, context);
+                const handlerResult = handler(unwrappedEvent, context);
                 const result = handlerResult instanceof Promise ? await handlerResult : handlerResult;
 
                 debug(context.requestId, 'HTTP processed', {});

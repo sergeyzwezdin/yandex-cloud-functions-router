@@ -339,6 +339,43 @@ describe('router', () => {
             ]);
         });
 
+        it('handles POST request with validator and base64 encoded message', async () => {
+            // Arrange
+            const handler = jest.fn(async (event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
+                statusCode: 200
+            }));
+            const route = router({
+                http: [
+                    {
+                        handler,
+                        httpMethod: ['POST'],
+                        validators: [(event: CloudFunctionHttpEvent, context: CloudFunctionContext) => event.body === 'x=test&y=1234'],
+                        decodeBase64Body: true
+                    }
+                ]
+            });
+            const event = httpMethodEvent({
+                httpMethod: 'POST',
+                body: 'eD10ZXN0Jnk9MTIzNA==',
+                isBase64Encoded: true
+            });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
+            expect(handler).toBeCalledTimes(1);
+            expect(handler.mock.calls[0][0].body).toBe('x=test&y=1234');
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: POST Body Length: 20 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+        });
+
         it('handles request by exact param', async () => {
             // Arrange
             const defaultHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
