@@ -33,48 +33,119 @@ const router: (
     event,
     context
 ) => {
+    const errorHandling =
+        options?.errorHandling ??
+        ({
+            http: {
+                notFound: () => ({
+                    statusCode: 404
+                }),
+                invalidRequest: () => ({
+                    statusCode: 400
+                })
+            }
+        } as ErrorHandlingOptions);
+
     try {
         if (isHttpEvent(event)) {
-            log('INFO', context.requestId, '', {
-                'HTTP Method': event.httpMethod,
-                'Body Length': event.body.length,
-                Query: event.queryStringParameters,
-                Headers: event.headers
-            });
+            try {
+                log('INFO', context.requestId, '', {
+                    'HTTP Method': event.httpMethod,
+                    'Body Length': event.body.length,
+                    Query: event.queryStringParameters,
+                    Headers: event.headers
+                });
 
-            return await httpRouter(routes.http || [], event, context, options);
+                return await httpRouter(routes.http || [], event, context, options);
+            } catch (error) {
+                if (errorHandling) {
+                    if (error instanceof NoMatchedRouteError && errorHandling.http?.notFound) {
+                        return errorHandling.http.notFound(error);
+                    } else if (error instanceof InvalidRequestError && errorHandling.http?.invalidRequest) {
+                        return errorHandling.http.invalidRequest(error);
+                    }
+                }
+
+                throw error;
+            }
         } else if (isTriggerEvent(event)) {
             const errors: Error[] = [];
 
             for (const message of event.messages) {
                 try {
                     if (isTimerEventMessage(message)) {
-                        log('INFO', context.requestId, 'Processing timer trigger message', {
-                            'Trigger Id': message.details.trigger_id
-                        });
+                        try {
+                            log('INFO', context.requestId, 'Processing timer trigger message', {
+                                'Trigger Id': message.details.trigger_id
+                            });
 
-                        await timerRouter(routes.timer || [], event, message, context);
+                            await timerRouter(routes.timer || [], event, message, context);
+                        } catch (error) {
+                            if (errorHandling) {
+                                if (error instanceof NoMatchedRouteError && errorHandling.timer?.notFound) {
+                                    return errorHandling.timer.notFound(error);
+                                }
+                            }
+
+                            throw error;
+                        }
                     } else if (isMessageQueueEventMessage(message)) {
-                        log('INFO', context.requestId, 'Processing message queue message', {
-                            'Queue Id': message.details.queue_id
-                        });
+                        try {
+                            log('INFO', context.requestId, 'Processing message queue message', {
+                                'Queue Id': message.details.queue_id
+                            });
 
-                        await messageQueueRouter(routes.message_queue || [], event, message, context);
+                            await messageQueueRouter(routes.message_queue || [], event, message, context);
+                        } catch (error) {
+                            if (errorHandling) {
+                                if (error instanceof NoMatchedRouteError && errorHandling.messageQueue?.notFound) {
+                                    return errorHandling.messageQueue.notFound(error);
+                                } else if (error instanceof InvalidRequestError && errorHandling.messageQueue?.invalidRequest) {
+                                    return errorHandling.messageQueue.invalidRequest(error);
+                                }
+                            }
+
+                            throw error;
+                        }
                     } else if (isObjectStorageEventMessage(message)) {
-                        log('INFO', context.requestId, 'Processing object storage message', {
-                            'Bucket Id': message.details.bucket_id,
-                            'Object Id': message.details.object_id
-                        });
+                        try {
+                            log('INFO', context.requestId, 'Processing object storage message', {
+                                'Bucket Id': message.details.bucket_id,
+                                'Object Id': message.details.object_id
+                            });
 
-                        await objectStorageRouter(routes.object_storage || [], event, message, context);
+                            await objectStorageRouter(routes.object_storage || [], event, message, context);
+                        } catch (error) {
+                            if (errorHandling) {
+                                if (error instanceof NoMatchedRouteError && errorHandling.objectStorage?.notFound) {
+                                    return errorHandling.objectStorage.notFound(error);
+                                } else if (error instanceof InvalidRequestError && errorHandling.objectStorage?.invalidRequest) {
+                                    return errorHandling.objectStorage.invalidRequest(error);
+                                }
+                            }
+
+                            throw error;
+                        }
                     } else if (isIotMessageEventMessage(message)) {
-                        log('INFO', context.requestId, 'Processing IoT Core message', {
-                            'Registry Id': message.details.registry_id,
-                            'Device Id': message.details.device_id,
-                            'MQTT Topic': message.details.mqtt_topic
-                        });
+                        try {
+                            log('INFO', context.requestId, 'Processing IoT Core message', {
+                                'Registry Id': message.details.registry_id,
+                                'Device Id': message.details.device_id,
+                                'MQTT Topic': message.details.mqtt_topic
+                            });
 
-                        await iotMessageRouter(routes.iot_message || [], event, message, context);
+                            await iotMessageRouter(routes.iot_message || [], event, message, context);
+                        } catch (error) {
+                            if (errorHandling) {
+                                if (error instanceof NoMatchedRouteError && errorHandling.iot?.notFound) {
+                                    return errorHandling.iot.notFound(error);
+                                } else if (error instanceof InvalidRequestError && errorHandling.iot?.invalidRequest) {
+                                    return errorHandling.iot.invalidRequest(error);
+                                }
+                            }
+
+                            throw error;
+                        }
                     } else {
                         log('ERROR', context.requestId, 'Unknown message type', {});
 
@@ -104,29 +175,8 @@ const router: (
             throw new UnknownEventTypeRouteError('Unknown event type.');
         }
     } catch (error) {
-        const errorHandling =
-            options?.errorHandling ??
-            ({
-                notFound: () => ({
-                    statusCode: 404
-                }),
-                invalidRequest: () => ({
-                    statusCode: 400
-                }),
-                unknownEvent: () => ({
-                    statusCode: 404
-                }),
-                unknownMessage: () => ({
-                    statusCode: 404
-                })
-            } as ErrorHandlingOptions);
-
         if (errorHandling) {
-            if (error instanceof NoMatchedRouteError && errorHandling.notFound) {
-                return errorHandling.notFound(error);
-            } else if (error instanceof InvalidRequestError && errorHandling.invalidRequest) {
-                return errorHandling.invalidRequest(error);
-            } else if (error instanceof UnknownEventTypeRouteError && errorHandling.unknownEvent) {
+            if (error instanceof UnknownEventTypeRouteError && errorHandling.unknownEvent) {
                 return errorHandling.unknownEvent(error);
             } else if (error instanceof UnknownMessageTypeRouteError && errorHandling.unknownMessage) {
                 return errorHandling.unknownMessage(error);

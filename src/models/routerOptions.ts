@@ -18,8 +18,25 @@ type RouterCorsOptions = {
 };
 
 type ErrorHandlingOptions = {
-    notFound?: (error: NoMatchedRouteError) => CloudFuntionResult;
-    invalidRequest?: (error: InvalidRequestError) => CloudFuntionResult;
+    http?: {
+        notFound?: (error: NoMatchedRouteError) => CloudFuntionResult;
+        invalidRequest?: (error: InvalidRequestError) => CloudFuntionResult;
+    };
+    timer?: {
+        notFound?: (error: NoMatchedRouteError) => CloudFuntionResult;
+    };
+    messageQueue?: {
+        notFound?: (error: NoMatchedRouteError) => CloudFuntionResult;
+        invalidRequest?: (error: InvalidRequestError) => CloudFuntionResult;
+    };
+    objectStorage?: {
+        notFound?: (error: NoMatchedRouteError) => CloudFuntionResult;
+        invalidRequest?: (error: InvalidRequestError) => CloudFuntionResult;
+    };
+    iot?: {
+        notFound?: (error: NoMatchedRouteError) => CloudFuntionResult;
+        invalidRequest?: (error: InvalidRequestError) => CloudFuntionResult;
+    };
     unknownEvent?: (error: UnknownEventTypeRouteError) => CloudFuntionResult;
     unknownMessage?: (error: UnknownMessageTypeRouteError) => CloudFuntionResult;
     triggerCombinedError?: (error: TriggerRouteError) => CloudFuntionResult;

@@ -1034,9 +1034,11 @@ describe('router', () => {
                 {},
                 {
                     errorHandling: {
-                        notFound: () => ({
-                            statusCode: 500
-                        })
+                        http: {
+                            notFound: () => ({
+                                statusCode: 500
+                            })
+                        }
                     }
                 }
             );
@@ -1109,9 +1111,11 @@ describe('router', () => {
                 },
                 {
                     errorHandling: {
-                        notFound: () => ({
-                            statusCode: 500
-                        })
+                        http: {
+                            notFound: () => ({
+                                statusCode: 500
+                            })
+                        }
                     }
                 }
             );

@@ -50,13 +50,10 @@ describe('router', () => {
         const context: CloudFunctionContext = {} as CloudFunctionContext;
 
         // Act
-        const result = await route(event, context);
+        const result = route(event, context);
 
         // Assert
-        expect(result).toBeDefined();
-        if (result) {
-            expect(result.statusCode).toBe(404);
-        }
+        await expect(result).rejects.toThrow(UnknownEventTypeRouteError);
     });
 
     it('throws an error for unknown message type', async () => {

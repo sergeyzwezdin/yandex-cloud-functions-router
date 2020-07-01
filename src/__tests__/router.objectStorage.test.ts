@@ -309,9 +309,11 @@ describe('router', () => {
                 {},
                 {
                     errorHandling: {
-                        notFound: () => ({
-                            statusCode: 500
-                        })
+                        objectStorage: {
+                            notFound: () => ({
+                                statusCode: 500
+                            })
+                        }
                     }
                 }
             );
@@ -396,9 +398,11 @@ describe('router', () => {
                 },
                 {
                     errorHandling: {
-                        notFound: () => ({
-                            statusCode: 500
-                        })
+                        objectStorage: {
+                            notFound: () => ({
+                                statusCode: 500
+                            })
+                        }
                     }
                 }
             );

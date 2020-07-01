@@ -231,26 +231,37 @@ describe('router', () => {
             const handler = jest.fn(
                 (event: CloudFunctionTriggerEvent, context: CloudFunctionContext, message: CloudFunctionMessageQueueEventMessage) => {}
             );
-            const route = router({
-                message_queue: [
-                    {
-                        handler,
-                        queueId: ['b4wt2lnqwvjwnregbqbb'],
-                        validators: [
-                            (
-                                event: CloudFunctionTriggerEvent,
-                                context: CloudFunctionContext,
-                                message: CloudFunctionMessageQueueEventMessage
-                            ) => false
-                        ],
-                        body: {
-                            json: {
-                                type: 'add'
+            const route = router(
+                {
+                    message_queue: [
+                        {
+                            handler,
+                            queueId: ['b4wt2lnqwvjwnregbqbb'],
+                            validators: [
+                                (
+                                    event: CloudFunctionTriggerEvent,
+                                    context: CloudFunctionContext,
+                                    message: CloudFunctionMessageQueueEventMessage
+                                ) => false
+                            ],
+                            body: {
+                                json: {
+                                    type: 'add'
+                                }
                             }
                         }
+                    ]
+                },
+                {
+                    errorHandling: {
+                        messageQueue: {
+                            invalidRequest: () => ({
+                                statusCode: 400
+                            })
+                        }
                     }
-                ]
-            });
+                }
+            );
             const event = messageQueueEvent();
             const context = eventContext();
 
@@ -528,9 +539,11 @@ describe('router', () => {
                 {},
                 {
                     errorHandling: {
-                        notFound: () => ({
-                            statusCode: 500
-                        })
+                        messageQueue: {
+                            notFound: () => ({
+                                statusCode: 500
+                            })
+                        }
                     }
                 }
             );
@@ -633,9 +646,11 @@ describe('router', () => {
                 },
                 {
                     errorHandling: {
-                        notFound: () => ({
-                            statusCode: 500
-                        })
+                        messageQueue: {
+                            notFound: () => ({
+                                statusCode: 500
+                            })
+                        }
                     }
                 }
             );

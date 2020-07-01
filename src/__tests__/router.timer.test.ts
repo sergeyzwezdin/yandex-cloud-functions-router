@@ -115,9 +115,11 @@ describe('router', () => {
                 {},
                 {
                     errorHandling: {
-                        notFound: () => ({
-                            statusCode: 500
-                        })
+                        timer: {
+                            notFound: () => ({
+                                statusCode: 500
+                            })
+                        }
                     }
                 }
             );
@@ -186,9 +188,11 @@ describe('router', () => {
                 },
                 {
                     errorHandling: {
-                        notFound: () => ({
-                            statusCode: 500
-                        })
+                        timer: {
+                            notFound: () => ({
+                                statusCode: 500
+                            })
+                        }
                     }
                 }
             );

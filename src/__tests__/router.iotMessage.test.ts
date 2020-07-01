@@ -234,9 +234,11 @@ describe('router', () => {
                 {},
                 {
                     errorHandling: {
-                        notFound: () => ({
-                            statusCode: 500
-                        })
+                        iot: {
+                            notFound: () => ({
+                                statusCode: 500
+                            })
+                        }
                     }
                 }
             );
@@ -327,9 +329,11 @@ describe('router', () => {
                 },
                 {
                     errorHandling: {
-                        notFound: () => ({
-                            statusCode: 500
-                        })
+                        iot: {
+                            notFound: () => ({
+                                statusCode: 500
+                            })
+                        }
                     }
                 }
             );
