@@ -849,7 +849,12 @@ export.handler = router({
   },
   {
     errorHandling: {
-      notFound: (error) => ({
+      http: {
+          notFound: (error) => ({
+            statusCode: 404
+          })
+      },
+      unknownEvent: (error) => ({
           statusCode: 404
       })
     }
@@ -858,7 +863,11 @@ export.handler = router({
 
 The following types of standard errors are supported:
 
-* `notFound` — throws when there are no matching route for the current request.
+* `http` / `messageQueue` / `objectStorage` / `iot`:
+    * `notFound` — throws when there are no matching route for the current request.
+    * `invalidRequest` — throws when the route is found, but there is validation error (during validation process).
+* `timer`:
+    * `notFound` — throws when there are no matching route for the current request.
 * `unknownEvent` — throws when the router is unable to determine the type of processed event.
 * `unknownMessage` — throws when the router started to process trigger event, but unable to determine the message type.
 * `triggerCombinedError` — if the function processes few messages at the time, and during the processing few exceptions are thrown, they will be combined into `TriggerRouteError` and could be handled with `triggerCombinedError`.
@@ -897,7 +906,7 @@ Every definition contains two mandatory properties - `error` and `result`.
 
 * `result` is a handler similar to normal (non-error) handler.
 
-You can skip to define `errorHandling` option. In this case default set of error handlers will work, that will return HTTP 404 for `notFound`, `unknownEvent`, and `unknownMessage` types.
+You can skip to define `errorHandling` option. In this case default set of error handlers will work, that will return HTTP 404 for `notFound`,  and HTTP 400 for `invalidRequest` types. Default error handlers are defined only for HTTP events.
 
 # License
 
