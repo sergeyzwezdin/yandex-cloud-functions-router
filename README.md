@@ -41,7 +41,7 @@ export.handler = router({
     ],
     message_queue: [
       {
-        queueId: 'a4wt2lnqwvjwnregbqbb',
+        queueId: ['a4wt2lnqwvjwnregbqbb'],
         handler: (event, context, message) => {
           // Handle Message Queue item
         }
@@ -283,7 +283,9 @@ export.handler = router({
       {
         httpMethod: ['POST'],
         body: {
-            'type': 'add'
+          json: {
+            type: 'add',
+          },
         },
         handler: (event, context) => {
           // Handle requests with the following body content
@@ -297,7 +299,9 @@ export.handler = router({
       {
         httpMethod: ['POST'],
         body: {
-            'type': 'update'
+          json: {
+            type: 'update',
+          },
         },
         handler: (event, context) => {
           // Handle requests with the following body content
