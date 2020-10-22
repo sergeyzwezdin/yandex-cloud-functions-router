@@ -139,7 +139,7 @@ describe('router', () => {
                     event_metadata: {
                         event_id: 'b3c1dtdass1b2lqq2ab3',
                         event_type: 'yandex.cloud.events.messagequeue.QueueMessage',
-                        created_at: new Date('2020-06-06T10:00:00Z'),
+                        created_at: '2020-06-06T10:00:00Z',
                         cloud_id: 'a3ac5mbbt1pwvs7mc13z',
                         folder_id: 'd5k3ghuuk35k13w1n49t'
                     },
@@ -169,7 +169,7 @@ describe('router', () => {
                     event_metadata: {
                         event_id: 'b3c1dtdass1b2lqq2ab3',
                         event_type: 'yandex.cloud.events.storage.ObjectCreate',
-                        created_at: new Date('2020-06-06T10:00:00Z'),
+                        created_at: '2020-06-06T10:00:00Z',
                         cloud_id: 'a3ac5mbbt1pwvs7mc13z',
                         folder_id: 'd5k3ghuuk35k13w1n49t',
                         tracing_context: {
@@ -236,7 +236,7 @@ describe('router', () => {
                     event_metadata: {
                         event_id: 'b3c1dtdass1b2lqq2ab3',
                         event_type: 'yandex.cloud.events.messagequeue.QueueMessage',
-                        created_at: new Date('2020-06-06T10:00:00Z'),
+                        created_at: '2020-06-06T10:00:00Z',
                         cloud_id: 'a3ac5mbbt1pwvs7mc13z',
                         folder_id: 'd5k3ghuuk35k13w1n49t'
                     },
@@ -266,7 +266,7 @@ describe('router', () => {
                     event_metadata: {
                         event_id: 'b3c1dtdass1b2lqq2ab3',
                         event_type: 'yandex.cloud.events.storage.ObjectCreate',
-                        created_at: new Date('2020-06-06T10:00:00Z'),
+                        created_at: '2020-06-06T10:00:00Z',
                         cloud_id: 'a3ac5mbbt1pwvs7mc13z',
                         folder_id: 'd5k3ghuuk35k13w1n49t',
                         tracing_context: {
