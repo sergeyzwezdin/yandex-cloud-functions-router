@@ -5,7 +5,7 @@ type CloudFunctionObjectStorageEventMessage = {
             | 'yandex.cloud.events.storage.ObjectCreate'
             | 'yandex.cloud.events.storage.ObjectUpdate'
             | 'yandex.cloud.events.storage.ObjectDelete';
-        created_at: Date;
+        created_at: string;
         tracing_context: {
             trace_id: string;
             span_id?: string;
