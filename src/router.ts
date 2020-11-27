@@ -152,7 +152,7 @@ const router: (
                         throw new UnknownMessageTypeRouteError('Unknown message type.');
                     }
                 } catch (e) {
-                    log('ERROR', context.requestId, 'Unexcpected error during message processing', {
+                    log('ERROR', context.requestId, 'Unexpected error during message processing', {
                         Error: e
                     });
 
