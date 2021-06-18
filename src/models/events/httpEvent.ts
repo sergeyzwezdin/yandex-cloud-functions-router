@@ -5,7 +5,7 @@ type CloudFunctionHttpEvent = {
     headers: { [name: string]: string };
     params: { [name: string]: string };
     pathParams: { [name: string]: string };
-    multiValueParams: { [name: string]:  string[] };
+    multiValueParams: { [name: string]: string[] };
     multiValueHeaders: { [name: string]: string[] };
     queryStringParameters: { [name: string]: string };
     multiValueQueryStringParameters: { [name: string]: string[] };
