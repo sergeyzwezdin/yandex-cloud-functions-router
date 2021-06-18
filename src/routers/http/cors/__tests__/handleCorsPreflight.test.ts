@@ -24,6 +24,9 @@ describe('handleCorsPreflight', () => {
             httpMethod: 'OPTIONS',
             headers: {},
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -37,7 +40,9 @@ describe('handleCorsPreflight', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/',
         };
         const options: RouterCorsOptions | undefined = undefined;
 
@@ -54,6 +59,9 @@ describe('handleCorsPreflight', () => {
             httpMethod: 'OPTIONS',
             headers: {},
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -67,7 +75,9 @@ describe('handleCorsPreflight', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/'
         };
         const options: RouterCorsOptions = {
             enable: false
@@ -86,6 +96,9 @@ describe('handleCorsPreflight', () => {
             httpMethod: 'POST',
             headers: {},
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -99,7 +112,9 @@ describe('handleCorsPreflight', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/'
         };
         const options: RouterCorsOptions = {
             enable: true
@@ -119,6 +134,9 @@ describe('handleCorsPreflight', () => {
             httpMethod: undefined,
             headers: {},
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -132,7 +150,9 @@ describe('handleCorsPreflight', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/'
         };
         const options: RouterCorsOptions = {
             enable: true
@@ -151,6 +171,9 @@ describe('handleCorsPreflight', () => {
             httpMethod: 'OPTIONS',
             headers: {},
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -164,7 +187,9 @@ describe('handleCorsPreflight', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/'
         };
         const options: RouterCorsOptions = {
             enable: true
@@ -189,6 +214,9 @@ describe('handleCorsPreflight', () => {
                 Origin: 'http://localhost:5000'
             },
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -202,7 +230,9 @@ describe('handleCorsPreflight', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/'
         };
         const options: RouterCorsOptions = {
             enable: true,
@@ -228,6 +258,9 @@ describe('handleCorsPreflight', () => {
                 Origin: 'http://localhost:5000'
             },
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -241,7 +274,9 @@ describe('handleCorsPreflight', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/'
         };
         const options: RouterCorsOptions = {
             enable: true,
@@ -272,6 +307,9 @@ describe('handleCorsPreflight', () => {
                 'Access-Control-Request-Method': 'PATCH'
             },
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -285,7 +323,9 @@ describe('handleCorsPreflight', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/'
         };
         const options: RouterCorsOptions = {
             enable: true,
@@ -317,6 +357,9 @@ describe('handleCorsPreflight', () => {
                 'Access-Control-Request-Headers': 'X-Test'
             },
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -330,7 +373,9 @@ describe('handleCorsPreflight', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: "/",
+            path: '/'
         };
         const options: RouterCorsOptions = {
             enable: true,
@@ -361,6 +406,9 @@ describe('handleCorsPreflight', () => {
                 Origin: 'http://localhost:5000'
             },
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -374,7 +422,9 @@ describe('handleCorsPreflight', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/'
         };
         const options: RouterCorsOptions = {
             enable: true,
@@ -405,6 +455,9 @@ describe('handleCorsPreflight', () => {
                 Cookie: 'login=user1'
             },
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -418,7 +471,9 @@ describe('handleCorsPreflight', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/'
         };
         const options: RouterCorsOptions = {
             enable: true,
