@@ -42,7 +42,7 @@ describe('handleCorsPreflight', () => {
             body: '',
             isBase64Encoded: false,
             url: '/',
-            path: '/',
+            path: '/'
         };
         const options: RouterCorsOptions | undefined = undefined;
 
@@ -374,7 +374,7 @@ describe('handleCorsPreflight', () => {
             },
             body: '',
             isBase64Encoded: false,
-            url: "/",
+            url: '/',
             path: '/'
         };
         const options: RouterCorsOptions = {

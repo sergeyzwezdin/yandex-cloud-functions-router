@@ -144,7 +144,7 @@ describe('getHeaderValue', () => {
             body: '',
             isBase64Encoded: false,
             url: '/',
-            path: '/',
+            path: '/'
         };
         const header = 'X-Test2';
 
@@ -182,7 +182,7 @@ describe('getHeaderValue', () => {
             body: '',
             isBase64Encoded: false,
             url: '/',
-            path: '/',
+            path: '/'
         };
         const header = 'X-Test2';
 
