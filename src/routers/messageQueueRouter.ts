@@ -4,7 +4,7 @@ import { InvalidRequestError, NoMatchedRouteError } from '../models/routerError'
 import { debug, log } from '../helpers/log';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
-import { CloudFuntionResult } from '../models/cloudFunctionResult';
+import { CloudFunctionResult } from '../models/cloudFunctionResult';
 import { matchObjectPattern } from '../helpers/matchObjectPattern';
 
 const validateQueueId = (context: CloudFunctionContext, queueIds: string[] | undefined, message: CloudFunctionMessageQueueEventMessage) => {
@@ -86,7 +86,7 @@ const messageQueueRouter: (
     event: CloudFunctionTriggerEvent,
     message: CloudFunctionMessageQueueEventMessage,
     context: CloudFunctionContext
-) => Promise<CloudFuntionResult> = async (routes, event, message, context) => {
+) => Promise<CloudFunctionResult> = async (routes, event, message, context) => {
     debug(context.requestId, 'Message queue processing started', {});
 
     for (const { queueId, body, validators, handler } of routes) {

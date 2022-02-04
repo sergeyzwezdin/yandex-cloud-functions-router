@@ -3,7 +3,7 @@ import { ObjectStorageRoute, ObjectStorageRouteTypeValidate } from '../models/ro
 import { debug, log } from '../helpers/log';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
-import { CloudFuntionResult } from '../models/cloudFunctionResult';
+import { CloudFunctionResult } from '../models/cloudFunctionResult';
 import { NoMatchedRouteError } from '../models/routerError';
 
 const validateType = (
@@ -67,7 +67,7 @@ const objectStorageRouter: (
     event: CloudFunctionTriggerEvent,
     message: CloudFunctionObjectStorageEventMessage,
     context: CloudFunctionContext
-) => Promise<CloudFuntionResult> = async (routes, event, message, context) => {
+) => Promise<CloudFunctionResult> = async (routes, event, message, context) => {
     debug(context.requestId, 'Object storage processing started', {});
 
     for (const { type, bucketId, objectId, handler } of routes) {

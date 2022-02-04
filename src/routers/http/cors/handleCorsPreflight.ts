@@ -1,10 +1,10 @@
 import { CloudFunctionHttpEvent } from '../../../models/cloudFunctionEvent';
-import { CloudFuntionResult } from '../../../models/cloudFunctionResult';
+import { CloudFunctionResult } from '../../../models/cloudFunctionResult';
 import { RouterCorsOptions } from '../../../models/routerOptions';
 import { getHeaderValue } from '../getHeaderValue';
 import { isOriginValid } from './isOriginValid';
 
-const handleCorsPreflight: (event: CloudFunctionHttpEvent, options?: RouterCorsOptions) => CloudFuntionResult | undefined = (
+const handleCorsPreflight: (event: CloudFunctionHttpEvent, options?: RouterCorsOptions) => CloudFunctionResult | undefined = (
     event,
     options
 ) => {

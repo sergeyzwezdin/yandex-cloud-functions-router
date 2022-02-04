@@ -1,7 +1,7 @@
 import { CloudFunctionMessageQueueEventMessage, CloudFunctionTriggerEvent } from '../cloudFunctionEvent';
 
 import { CloudFunctionContext } from '../cloudFunctionContext';
-import { CloudFuntionResult } from '../cloudFunctionResult';
+import { CloudFunctionResult } from '../cloudFunctionResult';
 
 type MessageQueueRoute = {
     queueId?: string[];
@@ -11,7 +11,7 @@ type MessageQueueRoute = {
         event: CloudFunctionTriggerEvent,
         context: CloudFunctionContext,
         message: CloudFunctionMessageQueueEventMessage
-    ) => CloudFuntionResult | Promise<CloudFuntionResult>;
+    ) => CloudFunctionResult | Promise<CloudFunctionResult>;
 };
 
 type MessageQueueRouteBodyValidate = {
