@@ -1,4 +1,4 @@
-type CloudFuntionResult = {
+type CloudFunctionResult = {
     statusCode: number;
     headers?: { [name: string]: string };
     multiValueHeaders?: { [name: string]: string };
@@ -6,4 +6,4 @@ type CloudFuntionResult = {
     isBase64Encoded?: boolean;
 } | void;
 
-export { CloudFuntionResult };
+export { CloudFunctionResult };

@@ -17,7 +17,7 @@ import {
 } from './models/routerError';
 
 import { CloudFunctionContext } from './models/cloudFunctionContext';
-import { CloudFuntionResult } from './models/cloudFunctionResult';
+import { CloudFunctionResult } from './models/cloudFunctionResult';
 import { Routes } from './models/routes';
 import { httpRouter } from './routers/httpRouter';
 import { iotMessageRouter } from './routers/iotMessageRouter';
@@ -29,7 +29,7 @@ import { timerRouter } from './routers/timerRouter';
 const router: (
     routes: Routes,
     options?: RouterOptions
-) => (event: CloudFunctionEvent, context: CloudFunctionContext) => Promise<CloudFuntionResult> = (routes, options) => async (
+) => (event: CloudFunctionEvent, context: CloudFunctionContext) => Promise<CloudFunctionResult> = (routes, options) => async (
     event,
     context
 ) => {

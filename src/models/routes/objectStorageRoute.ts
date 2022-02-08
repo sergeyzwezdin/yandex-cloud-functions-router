@@ -1,7 +1,7 @@
 import { CloudFunctionObjectStorageEventMessage, CloudFunctionTriggerEvent } from '../cloudFunctionEvent';
 
 import { CloudFunctionContext } from '../cloudFunctionContext';
-import { CloudFuntionResult } from '../cloudFunctionResult';
+import { CloudFunctionResult } from '../cloudFunctionResult';
 
 type ObjectStorageRoute = {
     type?: ObjectStorageRouteTypeValidate[];
@@ -11,7 +11,7 @@ type ObjectStorageRoute = {
         event: CloudFunctionTriggerEvent,
         context: CloudFunctionContext,
         message: CloudFunctionObjectStorageEventMessage
-    ) => CloudFuntionResult | Promise<CloudFuntionResult>;
+    ) => CloudFunctionResult | Promise<CloudFunctionResult>;
 };
 
 type ObjectStorageRouteTypeValidate = 'create' | 'update' | 'delete';

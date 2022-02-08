@@ -4,7 +4,7 @@ import { debug, log } from '../helpers/log';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
 import { CloudFunctionHttpEvent } from '../models/cloudFunctionEvent';
-import { CloudFuntionResult } from '../models/cloudFunctionResult';
+import { CloudFunctionResult } from '../models/cloudFunctionResult';
 import { RouterOptions } from '../models/routerOptions';
 import { appendCorsHeadersToMainResponse } from './http/cors/appendCorsHeadersToMainResponse';
 import { handleCorsPreflight } from './http/cors/handleCorsPreflight';
@@ -153,7 +153,7 @@ const httpRouter: (
     event: CloudFunctionHttpEvent,
     context: CloudFunctionContext,
     options?: RouterOptions
-) => Promise<CloudFuntionResult> = async (routes, event, context, options) => {
+) => Promise<CloudFunctionResult> = async (routes, event, context, options) => {
     const corsOptions = resolveCorsOptions(options?.cors);
 
     debug(context.requestId, 'HTTP request processing started', { CORS: corsOptions });

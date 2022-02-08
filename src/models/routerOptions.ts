@@ -6,7 +6,7 @@ import {
     UnknownMessageTypeRouteError
 } from './routerError';
 
-import { CloudFuntionResult } from './cloudFunctionResult';
+import { CloudFunctionResult } from './cloudFunctionResult';
 import { HttpMethod } from './httpMethod';
 
 type RouterCorsOptions = {
@@ -19,30 +19,30 @@ type RouterCorsOptions = {
 
 type ErrorHandlingOptions = {
     http?: {
-        notFound?: (error: NoMatchedRouteError) => CloudFuntionResult;
-        invalidRequest?: (error: InvalidRequestError) => CloudFuntionResult;
+        notFound?: (error: NoMatchedRouteError) => CloudFunctionResult;
+        invalidRequest?: (error: InvalidRequestError) => CloudFunctionResult;
     };
     timer?: {
-        notFound?: (error: NoMatchedRouteError) => CloudFuntionResult;
+        notFound?: (error: NoMatchedRouteError) => CloudFunctionResult;
     };
     messageQueue?: {
-        notFound?: (error: NoMatchedRouteError) => CloudFuntionResult;
-        invalidRequest?: (error: InvalidRequestError) => CloudFuntionResult;
+        notFound?: (error: NoMatchedRouteError) => CloudFunctionResult;
+        invalidRequest?: (error: InvalidRequestError) => CloudFunctionResult;
     };
     objectStorage?: {
-        notFound?: (error: NoMatchedRouteError) => CloudFuntionResult;
-        invalidRequest?: (error: InvalidRequestError) => CloudFuntionResult;
+        notFound?: (error: NoMatchedRouteError) => CloudFunctionResult;
+        invalidRequest?: (error: InvalidRequestError) => CloudFunctionResult;
     };
     iot?: {
-        notFound?: (error: NoMatchedRouteError) => CloudFuntionResult;
-        invalidRequest?: (error: InvalidRequestError) => CloudFuntionResult;
+        notFound?: (error: NoMatchedRouteError) => CloudFunctionResult;
+        invalidRequest?: (error: InvalidRequestError) => CloudFunctionResult;
     };
-    unknownEvent?: (error: UnknownEventTypeRouteError) => CloudFuntionResult;
-    unknownMessage?: (error: UnknownMessageTypeRouteError) => CloudFuntionResult;
-    triggerCombinedError?: (error: TriggerRouteError) => CloudFuntionResult;
+    unknownEvent?: (error: UnknownEventTypeRouteError) => CloudFunctionResult;
+    unknownMessage?: (error: UnknownMessageTypeRouteError) => CloudFunctionResult;
+    triggerCombinedError?: (error: TriggerRouteError) => CloudFunctionResult;
     custom?: {
         error: string | RegExp;
-        result: (error: Error) => CloudFuntionResult;
+        result: (error: Error) => CloudFunctionResult;
     }[];
 };
 

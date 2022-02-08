@@ -1,5 +1,5 @@
 import { CloudFunctionHttpEvent } from '../../../models/cloudFunctionEvent';
-import { CloudFuntionResult } from '../../../models/cloudFunctionResult';
+import { CloudFunctionResult } from '../../../models/cloudFunctionResult';
 import { RouterCorsOptions } from '../../../models/routerOptions';
 import { getHeaderValue } from '../getHeaderValue';
 import { isOriginValid } from './isOriginValid';
@@ -11,9 +11,9 @@ import { isRequestSimple } from './isRequestSimple';
  */
 const appendCorsHeadersToMainResponse: (
     request: CloudFunctionHttpEvent,
-    response: CloudFuntionResult,
+    response: CloudFunctionResult,
     corsOptions: RouterCorsOptions
-) => CloudFuntionResult = (request, response, corsOptions) => {
+) => CloudFunctionResult = (request, response, corsOptions) => {
     if (response && corsOptions.enable) {
         const currentOrigin = getHeaderValue(request, 'origin');
 
@@ -27,7 +27,7 @@ const appendCorsHeadersToMainResponse: (
                         'Access-Control-Allow-Origin': currentOrigin,
                         ...(corsOptions.allowCredentials === true && isCookieSet ? { 'Access-Control-Allow-Credentials': 'true' } : {})
                     }
-                } as CloudFuntionResult;
+                } as CloudFunctionResult;
             }
         }
     }

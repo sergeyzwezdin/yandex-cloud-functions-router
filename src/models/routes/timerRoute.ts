@@ -1,7 +1,7 @@
 import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from '../cloudFunctionEvent';
 
 import { CloudFunctionContext } from '../cloudFunctionContext';
-import { CloudFuntionResult } from '../cloudFunctionResult';
+import { CloudFunctionResult } from '../cloudFunctionResult';
 
 type TimerRoute = {
     triggerId?: string[];
@@ -9,7 +9,7 @@ type TimerRoute = {
         event: CloudFunctionTriggerEvent,
         context: CloudFunctionContext,
         message: CloudFunctionTimerEventMessage
-    ) => CloudFuntionResult | Promise<CloudFuntionResult>;
+    ) => CloudFunctionResult | Promise<CloudFunctionResult>;
 };
 
 export { TimerRoute };

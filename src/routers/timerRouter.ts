@@ -2,7 +2,7 @@ import { CloudFunctionTimerEventMessage, CloudFunctionTriggerEvent } from '../mo
 import { debug, log } from '../helpers/log';
 
 import { CloudFunctionContext } from '../models/cloudFunctionContext';
-import { CloudFuntionResult } from '../models/cloudFunctionResult';
+import { CloudFunctionResult } from '../models/cloudFunctionResult';
 import { NoMatchedRouteError } from '../models/routerError';
 import { TimerRoute } from '../models/routes';
 
@@ -25,7 +25,7 @@ const timerRouter: (
     event: CloudFunctionTriggerEvent,
     message: CloudFunctionTimerEventMessage,
     context: CloudFunctionContext
-) => Promise<CloudFuntionResult> = async (routes, event, message, context) => {
+) => Promise<CloudFunctionResult> = async (routes, event, message, context) => {
     debug(context.requestId, 'Timer processing started', {});
 
     for (const { handler, triggerId } of routes) {
