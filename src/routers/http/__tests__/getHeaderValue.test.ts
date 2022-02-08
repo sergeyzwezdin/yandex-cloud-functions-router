@@ -51,6 +51,9 @@ describe('getHeaderValue', () => {
             httpMethod: 'PUT',
             headers: {},
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -64,7 +67,9 @@ describe('getHeaderValue', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/'
         };
         const header = 'X-Test';
 
@@ -83,6 +88,9 @@ describe('getHeaderValue', () => {
                 'X-Test': '1234'
             },
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -96,7 +104,9 @@ describe('getHeaderValue', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/'
         };
         const header = undefined;
 
@@ -116,6 +126,9 @@ describe('getHeaderValue', () => {
                 'X-Test': '1234'
             },
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -129,7 +142,9 @@ describe('getHeaderValue', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/'
         };
         const header = 'X-Test2';
 
@@ -149,6 +164,9 @@ describe('getHeaderValue', () => {
                 'X-Test2': '5678'
             },
             multiValueHeaders: {},
+            multiValueParams: {},
+            params: {},
+            pathParams: {},
             queryStringParameters: {},
             multiValueQueryStringParameters: {},
             requestContext: {
@@ -162,7 +180,9 @@ describe('getHeaderValue', () => {
                 requestTimeEpoch: 0
             },
             body: '',
-            isBase64Encoded: false
+            isBase64Encoded: false,
+            url: '/',
+            path: '/'
         };
         const header = 'X-Test2';
 
