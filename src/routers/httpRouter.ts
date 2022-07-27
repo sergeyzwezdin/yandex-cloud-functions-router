@@ -24,6 +24,19 @@ const validateHttpMethod = (httpMethod: string[] | undefined, event: CloudFuncti
     return result;
 };
 
+const validatePath = (path: string[] | undefined, event: CloudFunctionHttpEvent) => {
+    const result = path
+        ? path.map((p) => p.trim().toLowerCase()).indexOf(event.path.trim().toLocaleLowerCase()) !== -1
+        : true;
+    
+    debug(event.requestContext.requestId, `Validating path: ${result ? 'valid' : 'invalid'}`, {
+        allowed: path ?? '',
+        actual: event.path
+    });
+    
+    return result;
+}
+
 const validateParams = (params: HttpRouteParamValidate | undefined, event: CloudFunctionHttpEvent) => {
     if (params) {
         const eventParams = Object.entries(event.queryStringParameters).reduce<{ [name: string]: string }>(
@@ -158,13 +171,14 @@ const httpRouter: (
 
     debug(context.requestId, 'HTTP request processing started', { CORS: corsOptions });
 
-    for (const { httpMethod, params, body, validators, decodeBase64Body, handler } of routes) {
-        const matched = validateHttpMethod(httpMethod, event) && validateParams(params, event) && validateBodyPattern(body, event);
+    for (const { httpMethod, path, params, body, validators, decodeBase64Body, handler } of routes) {
+        const matched = validateHttpMethod(httpMethod, event) && validateParams(params, event) && validateBodyPattern(body, event) && validatePath(path, event);
 
         debug(context.requestId, 'HTTP request matching completed', {
             matched,
             event,
             httpMethod: httpMethod ?? '',
+            path: path ?? '',
             params: params ?? '',
             body: body ?? ''
         });

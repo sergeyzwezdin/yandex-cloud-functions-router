@@ -36,7 +36,7 @@ const httpMethodEvent: (data: {
     },
     isBase64Encoded: isBase64Encoded ?? false,
     url: '/',
-    path: '/'
+    path: '/api/Something'
 });
 
 const timerEvent: (data: { triggerId: string }) => CloudFunctionEvent = ({ triggerId }) => ({

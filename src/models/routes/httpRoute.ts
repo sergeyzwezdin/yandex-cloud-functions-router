@@ -5,6 +5,7 @@ import { HttpMethod } from '../../models/httpMethod';
 
 type HttpRoute = {
     httpMethod?: HttpMethod[];
+    path?: string[];
     params?: HttpRouteParamValidate;
     body?: HttpRouteBodyPatternValidate;
     validators?: CustomHttpValidator[];
