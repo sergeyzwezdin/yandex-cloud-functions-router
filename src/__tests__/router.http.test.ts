@@ -103,6 +103,53 @@ describe('router', () => {
             ]);
         });
 
+        it('handles GET request with path', async () => {
+            // Arrange
+            const getHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
+                statusCode: 200
+            }));
+            const postHandler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
+                statusCode: 200
+            }));
+            const route = router(
+                {
+                    http: [
+                        {
+                            // @ts-ignore
+                            httpMethod: ['Post'], // intentionally case-insensitive method name check
+                            path: ['/api/Something'],
+                            handler: postHandler
+                        },
+                        {
+                            // @ts-ignore
+                            httpMethod: ['Get'], // intentionally case-insensitive method name check
+                            path: ['/api/Something'],
+                            handler: getHandler
+                        }
+                    ]
+                },
+                {
+                    errorHandling: {}
+                }
+            );
+            const event = httpMethodEvent({ httpMethod: 'GET' });
+            const context = eventContext();
+
+            // Act
+            const result = await route(event, context);
+
+            // Assert
+            expect(result).toBeDefined();
+            if (result) {
+                expect(result.statusCode).toBe(200);
+            }
+            expect(getHandler).toBeCalledTimes(1);
+            expect(postHandler).toBeCalledTimes(0);
+            expect(consoleMock.info.mock.calls).toEqual([
+                [`[ROUTER] INFO RequestID: ${context.requestId} HTTP Method: GET Body Length: 0 Query: {} Headers: {"User-Agent":"jest"}`]
+            ]);
+        });
+
         it('handles GET request with validator', async () => {
             // Arrange
             const handler = jest.fn((event: CloudFunctionHttpEvent, context: CloudFunctionContext) => ({
